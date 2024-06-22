@@ -1,3 +1,3 @@
 <x-dashboard-layout>
- Dashboard 
+    Notice Dashboard
 </x-dashboard-layout>

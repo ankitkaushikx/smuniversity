@@ -1,3 +1,3 @@
 <x-dashboard-layout>
- Dashboard 
+Results Dashboard
 </x-dashboard-layout>

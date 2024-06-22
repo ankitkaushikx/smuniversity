@@ -16,12 +16,26 @@
 
       </head>
 
-      <body class="font-sans antialiased dark:bg-black dark:text-white/50">
+      <body class="font-sans antialiased dark:bg-black dark:text-white/50  bg-gray-300">
+      {{-- Sidebar From FlowBite   /components/sidebar --}}
     <x-sidebar></x-sidebar>
+      {{-- Sidebar From FlowBite   /components/dashNav --}}
+
     <x-dashNav></x-dashNav>
-  <main>
-         {{$slot}}
-  </main>
+
+      {{-- FlowBite Container  --}}
+            <div class="p-4 sm:ml-64 bg-grey-200">
+                <div class="p-4  border-grey-900 border-1 rounded-lg shadow-lg bg-white dark:border-gray-700 mt-14">
+                    {{-- Slot Default by laravel --}}
+                    <main>
+                        {{ $slot }}
+                    </main>
+                </div>
+
+
+   
+            </div>
+ 
       </body>
 
       </html>

@@ -1,3 +1,3 @@
 <x-dashboard-layout>
- Dashboard 
+    Students Dashboard
 </x-dashboard-layout>

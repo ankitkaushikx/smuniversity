@@ -1,3 +1,3 @@
 <x-dashboard-layout>
- Dashboard 
+   Centers Dashboard
 </x-dashboard-layout>

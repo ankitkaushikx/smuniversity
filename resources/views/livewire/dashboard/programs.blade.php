@@ -1,3 +1,3 @@
 <x-dashboard-layout>
- Dashboard 
+    Program Dashboard
 </x-dashboard-layout>

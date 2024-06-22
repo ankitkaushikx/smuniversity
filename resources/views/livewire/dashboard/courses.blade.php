@@ -1,3 +1,3 @@
 <x-dashboard-layout>
- Dashboard 
+    Courses Dashboard
 </x-dashboard-layout>
