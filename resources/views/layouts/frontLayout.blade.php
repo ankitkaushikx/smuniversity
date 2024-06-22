@@ -31,7 +31,7 @@
   </header>
 
   {{-- Main Content --}}
-  <main class="container mx-auto py-1 min-h-screen">
+  <main class="container mx-auto py-1 px-1 min-h-screen">
     {{$slot}}
   </main>
 
