@@ -17,8 +17,11 @@
       </head>
 
       <body class="font-sans antialiased dark:bg-black dark:text-white/50">
-      <x-DashNav></x-DashNav>
-       {{$slot}}
+    <x-sidebar></x-sidebar>
+    <x-dashNav></x-dashNav>
+  <main>
+         {{$slot}}
+  </main>
       </body>
 
       </html>
