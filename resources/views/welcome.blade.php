@@ -10,9 +10,12 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
         
-        
+        {{-- Scripts Vite --}}
+          @vite(['resources/css/app.css', 'resources/js/app.js'])
        
     </head>
     <body class="font-sans antialiased dark:bg-black dark:text-white/50">
+
+        <h1>Welcome Page</h1>
     </body>
 </html>
