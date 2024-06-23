@@ -14,20 +14,20 @@ Route::prefix('dashboard')->group(function () {
 
 
   // Programs 
-  Route::view('/programs', 'livewire.dashboard.programs')->name('programs');
+  Route::get('/programs', \App\Livewire\Dashboard\Programs::class)->name('programs');
 
   //Course
   Route::get('/courses',\App\Livewire\Dashboard\Courses::class)->name('courses');
 
   //NoticeZone
-  Route::view('/noticezone', 'livewire.dashboard.noticezone')->name('noticezone');
+  Route::get('/noticezone', \App\Livewire\Dashboard\Noticezone::class)->name('noticezone');
 
   //Centers Management
   Route::get('/centers', \App\Livewire\Dashboard\Centers::class)->name('centers');
 
   //Students Management
-  Route::view('/students', 'livewire.dashboard.students')->name('students');
+  Route::get('/students', \App\Livewire\Dashboard\Students::class)->name('students');
 
   //Results Management
-  Route::view('/results', 'livewire.dashboard.results')->name('results');
+  Route::get('/results', \App\Livewire\Dashboard\Results::class)->name('results');
 });

@@ -1,3 +1,3 @@
-<x-dashboard-layout>
-    Notice Dashboard
-</x-dashboard-layout>
+<div class="">
+    Notice zone
+</div>

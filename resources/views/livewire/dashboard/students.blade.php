@@ -1,3 +1,3 @@
-<x-dashboard-layout>
-    Students Dashboard
-</x-dashboard-layout>
+<div class="">
+    Student
+</div>
