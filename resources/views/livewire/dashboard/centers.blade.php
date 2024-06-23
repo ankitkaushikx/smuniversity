@@ -1,3 +1,3 @@
-<x-dashboard-layout>
-   Centers Dashboard
-</x-dashboard-layout>
+<div>
+  {{$title}} kdjfkd
+</div>

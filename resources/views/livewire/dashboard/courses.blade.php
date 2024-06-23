@@ -1,3 +1,5 @@
-<x-dashboard-layout>
-    Courses Dashboard
-</x-dashboard-layout>
+<div>
+@foreach ($courseList as $course)
+  {{$course}}  <br>
+@endforeach
+</div>

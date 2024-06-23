@@ -26,16 +26,14 @@
       {{-- FlowBite Container  --}}
             <div class="p-4 sm:ml-64 bg-grey-200">
                 <div class="p-4  border-grey-900 border-1 rounded-lg shadow-lg bg-white dark:border-gray-700 mt-14">
+                  
                     {{-- Slot Default by laravel --}}
                     <main>
+              
                         {{ $slot }}
                     </main>
                 </div>
-
-
-   
             </div>
- 
       </body>
 
       </html>

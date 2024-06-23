@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\support\Facades\Route;
-
-
+use App\Http\Livewire\Dashboard\Centers;
+use App\Http\Controllers\CenterController;
+use App\Livewire\Dashboard\Courses;
 
 //Dashboard routes
 Route::view('/dashboard', 'livewire.pages.dashboard')->name('dashboard');
@@ -16,13 +17,13 @@ Route::prefix('dashboard')->group(function () {
   Route::view('/programs', 'livewire.dashboard.programs')->name('programs');
 
   //Course
-  Route::view('/courses', 'livewire.dashboard.courses')->name('courses');
+  Route::get('/courses',\App\Livewire\Dashboard\Courses::class)->name('courses');
 
   //NoticeZone
   Route::view('/noticezone', 'livewire.dashboard.noticezone')->name('noticezone');
 
   //Centers Management
-  Route::view('/centers', 'livewire.dashboard.centers')->name('centers');
+  Route::get('/centers', \App\Livewire\Dashboard\Centers::class)->name('centers');
 
   //Students Management
   Route::view('/students', 'livewire.dashboard.students')->name('students');
