@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.news-ticker {
+    width: 100%;
+    overflow: hidden;
+    padding: 5px;
+    border: 1px solid #ccc;
+    white-space: nowrap;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.ticker-wrapper {
+    display: inline-block;
+    animation: ticker 20s linear infinite;
+    animation-play-state: running;
+}
+
+.ticker-item {
+    display: inline-block;
+    padding: 0 50px;
+    font-size: 16px;
+    color: white;
+}
+
+.news-ticker:hover .ticker-wrapper {
+    animation-play-state: paused;
+}
+
+@keyframes ticker {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}

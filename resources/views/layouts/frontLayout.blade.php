@@ -27,6 +27,13 @@
 <body class="font-sans antialiased dark:bg-black dark:text-white/50">
   <header class="p-1 bg-gray-100 dark:bg-gray-900">
     {{-- Nav Bar For Front --}}
+
+    {{--NEWS Ticker  --}}
+   <livewire:components.news-ticker />
+
+
+  
+
     <x-FrontNav></x-FrontNav>
   </header>
 

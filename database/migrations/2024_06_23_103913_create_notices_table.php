@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('programs', function (Blueprint $table) {
+        Schema::create('notices', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->mediumText('description')->nullable();
-            $table->string('comment')->nullable();
-            $table->string('banner')->nullable();
-            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->string('heading');
+            $table->mediumText('detail')->nullable();
             $table->softDeletes();
+            $table->string('banner')->nullable();
+            $table->string('link')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('programs');
+        Schema::dropIfExists('notices');
     }
 };
