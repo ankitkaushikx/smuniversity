@@ -24,10 +24,10 @@ class Programs extends Component
 
    /// Create New Program 
     public function create(){
-        $user = Auth::user();
-        if($user->role !=='admin'){
-            abort(404);
-        }
+        // $user = Auth::user();
+        // if($user->role !=='admin'){
+        //     abort(404);
+        // }
         
 
         // Validate the data;

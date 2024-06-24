@@ -15,12 +15,13 @@ return new class extends Migration
              $table->id();
             $table->foreignId('program_id')->constrained();
             $table->string('name');
-            $table->enum('eligiblity', ['tenth', 'twelfth', 'diploma', 'undergraduate', 'postgraduate']);
+            $table->enum('eligibility', ['tenth', 'twelfth', 'diploma', 'undergraduate', 'postgraduate']);
             $table->string('duration');
            
             $table->string('banner')->nullable();
+            $table->string('description')->nullable();
             $table->string('comment')->nullable();
-            $table->enum('status', ['acitve', 'inactive']);
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->softDeletes();
             $table->timestamps();
         });

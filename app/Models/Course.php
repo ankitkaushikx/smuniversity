@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Course extends Model
 {
     use HasFactory, SoftDeletes;
-
+  protected $guarded = [];
     public function program() :BelongsTo
     {
         return $this->belongsTo(Program::class);

@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Notice;
 use Illuminate\Support\Facades\Auth;
+use Storage;
 class Noticezone extends Component
 {
     use WithFileUploads;
