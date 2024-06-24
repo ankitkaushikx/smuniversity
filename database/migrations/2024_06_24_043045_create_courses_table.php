@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('courses', function (Blueprint $table) {
-            $table->id();
+             $table->id();
             $table->foreignId('program_id')->constrained();
             $table->string('name');
             $table->enum('eligiblity', ['tenth', 'twelfth', 'diploma', 'undergraduate', 'postgraduate']);

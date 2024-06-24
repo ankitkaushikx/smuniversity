@@ -1,19 +1,19 @@
 <div class="">
 
-{{-- Success Message --}}
- @if (session()->has('message'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-            {{ session('message') }}
-        </div>
-    @endif
+
     {{-- Page Heading --}}
     <h1 class="bg-gray-300 px-2 py-2 rounded-md text-center font-bold">Add New Faculty</h1>
     <form wire:submit.prevent=" create" class="space-y-4">
      @csrf
-    
+    {{-- Success Message --}}
+ @if (session()->has('message'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-2 rounded relative" role="alert">
+            {{ session('message') }}
+        </div>
+    @endif
      {{-- Program Name --}}
     <div class="form-group">
-     <input type="text" id="name" wire:model="name" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Name Of Faculty"/>
+     <input type="text" id="name" wire:model="name" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Name Of Faculty *"/>
      @error('name')
       <span class="text-red-500 text-sm">{{$message}}</span>         
      @enderror
@@ -29,14 +29,14 @@
 
     {{--Banner   --}}
     <div class="form-group">
-            <label for="banner" class="block text-sm font-medium text-gray-700">Banner</label>
+            <label for="banner" class="block text-sm font-medium text-gray-700">Banner (Optional)</label>
             <input type="file" id="banner" wire:model="banner" class="mt-1 block w-full border border-gray-300 sm:text-sm border-gray-300 rounded-md" accept="image/jpeg, image/jpg, image/png">
             @error('banner') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
 
         {{-- Comment --}}
          <div class="form-group">
-     <input type="text" id="comment" wire:model="comment" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Comment For Faculty"/>
+     <input type="text" id="comment" wire:model="comment" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Comment For Faculty (optional)"/>
      @error('comment')
       <span class="text-red-500 text-sm">{{$message}}</span>         
      @enderror
@@ -70,7 +70,7 @@
                     @foreach ($programs as $program)
                         <tr class="hover:bg-gray-50 border-b-2 text-center">
                             <td class="px-3 py-2 whitespace-nowrap">{{ $program->id }}</td>
-                            <td class="px-3 py-2 whitespace-nowrap" colspan="2">{{ $program->name}}</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-left" colspan="2">{{ $program->name}}</td>
                             {{-- <td class="px-3 py-2 ">{{ Str::limit($program->detail,20,'...') }}</td> --}}
                             <td class="px-3 py-2 whitespace-nowrap">
                                 @if ($program->banner)
