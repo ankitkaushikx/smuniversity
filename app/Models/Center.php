@@ -14,7 +14,7 @@ class Center extends Model
 
 
     // Belongs to Relationship with User
-
+    protected $guarded = [];
     
 
     public function user(): BelongsTo {

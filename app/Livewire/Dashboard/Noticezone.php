@@ -18,25 +18,17 @@ class Noticezone extends Component
     public $status;
     // public $notices;
     public $search;
-
-    protected $rules = [
+    public $notice;
+    public $editMode = false;
+ protected $rules = [
         'heading' => 'required|string|max:255',
         'detail' => 'required|string',
         'banner' => 'nullable|image|max:10240', // 10MB Max
         'link' => 'nullable|url',
-        'status' => 'required|in:active,inactive',
     ];
 
-
-    // Create New Notice
-    public function submit()
+    public function create()
     {
-        $user = Auth::user();
-        
-        // if ($user->role !== 'admin') {
-        //     abort(404);
-        // }
-
         $validatedData = $this->validate();
 
         if ($this->banner) {
@@ -48,35 +40,104 @@ class Noticezone extends Component
             'detail' => $validatedData['detail'],
             'banner' => $validatedData['banner'] ?? null,
             'link' => $validatedData['link'],
-            'status' => $validatedData['status'],
         ]);
 
         session()->flash('message', 'Notice Added Successfully');
 
-        // Optionally reset form fields
-        $this->reset(['heading', 'detail', 'banner', 'link', 'status']);
+        $this->reset(['heading', 'detail', 'banner', 'link']);
     }
 
-    // Delete Notice
- public function delete(Notice $notice)
+    public function hide($id)
+    {
+        $notice = Notice::findOrFail($id);
+        $notice->delete();
+
+        session()->flash('message', 'Notice Hidden Successfully');
+    }
+
+    public function unhide($id)
+    {
+        $notice = Notice::withTrashed()->findOrFail($id);
+        
+        if ($notice->trashed()) {
+            $notice->restore();
+            session()->flash('message', 'Notice Unhided Successfully');
+        }
+    }
+
+    public function delete($id)
+    {
+        $notice = Notice::findOrFail($id);
+
+        if ($notice->banner) {
+            Storage::disk('public')->delete($notice->banner);
+        }
+
+        $notice->forceDelete();
+
+        session()->flash('message', 'Notice deleted successfully.');
+    }
+
+    public function edit($id)
 {
-    if ($notice->banner) {
-        // Delete the banner file from the storage
-        \Storage::disk('public')->delete($notice->banner);
-        //  $this->removeUpload($notice->banner);
-    }
+    $this->editMode = true;
+    $this->notice = Notice::findOrFail($id);
 
-    // Delete the notice from the database
-    $notice->delete();
+    // Populate form fields with $this->notice properties
+    $this->heading = $this->notice->heading;
+    $this->detail = $this->notice->detail;
+    $this->link = $this->notice->link;
+        $this->banner = null;
+    // If banner exists, set the banner property (if you have a form field for banner)
+    // Assuming you are not directly editing the banner in the form (optional)
+    // $this->banner = $this->notice->banner;
 
-    session()->flash('message', 'Notice deleted successfully.');
+    // Optionally, you might want to clear the validation errors when switching to edit mode
+    $this->resetValidation();
 }
 
 
+   
+
+
+
+public function update()
+{
+    $validatedData = $this->validate([
+        'heading' => 'required|string|max:255',
+        'detail' => 'required|string',
+        'banner' => 'nullable|image|max:10240', // 10MB Max
+        'link' => 'nullable|url',
+    ]);
+
+    $notice = Notice::findOrFail($this->notice['id']);
+
+    if ($this->banner) {
+        // Delete old banner if exists
+        if ($notice->banner) {
+            Storage::disk('public')->delete($notice->banner);
+        }
+        // Store new banner
+        $validatedData['banner'] = $this->banner->store('banners', 'public');
+    } else {
+        // Keep existing banner
+        $validatedData['banner'] = $notice->banner;
+    }
+
+    $notice->update([
+        'heading' => $validatedData['heading'],
+        'detail' => $validatedData['detail'],
+        'banner' => $validatedData['banner'],
+        'link' => $validatedData['link'],
+    ]);
+
+    session()->flash('message', 'Notice updated successfully.');
+
+    $this->reset(['heading', 'detail', 'banner', 'link', 'editMode']);
+}
+
     public function render()
     {
-
-      
-    return view('livewire.dashboard.noticezone', ['notices'=> Notice::latest()->paginate(10)]);
+    return view('livewire.dashboard.noticezone', ['notices'=> Notice::withTrashed()->latest()->paginate(10)]);
     }
 }

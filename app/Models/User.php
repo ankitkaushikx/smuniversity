@@ -22,6 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone_number', 
+        'role',
+        'status'
     ];
 
     /**
@@ -51,4 +54,6 @@ class User extends Authenticatable
     {
         return $this->hasone(Center::class);
     }
+
+    
 }

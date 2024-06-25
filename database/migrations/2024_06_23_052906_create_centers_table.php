@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->string('center_code')->unique();
-            $table->string('properietor_name');
+            $table->string('proprietor_name');
             $table->string('address');
             $table->string('id_proof');
             $table->string('comment')->nullable();
             $table->smallInteger('total_student');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

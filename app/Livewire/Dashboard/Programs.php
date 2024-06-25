@@ -15,6 +15,8 @@ class Programs extends Component
    public $banner;
    public $comment;
 
+    public $editMode = false;
+
     protected $rules = [
         'name' => 'required | string | max:255',
         'description' => 'nullable | string',
