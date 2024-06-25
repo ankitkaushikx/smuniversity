@@ -3,7 +3,7 @@
 
     {{-- Page Heading --}}
     <h1 class="bg-gray-300 px-2 py-2 rounded-md text-center font-bold">Add New Faculty</h1>
-    <form wire:submit.prevent=" create" class="space-y-4">
+    <form wire:submit.prevent="create" class="space-y-4">
      @csrf
     {{-- Success Message --}}
  @if (session()->has('message'))

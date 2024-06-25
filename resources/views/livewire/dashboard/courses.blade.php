@@ -3,7 +3,7 @@
 
     {{-- Page Heading --}}
     <h1 class="bg-gray-300 px-2 py-2 rounded-md text-center font-bold">Add New Course</h1>
-    <form wire:submit.prevent="create" class="space-y-4">
+    <form wire:submit.prevent="{{$editMode ? 'update' : 'create'}}" class="space-y-4">
      @csrf
     {{-- Success Message --}}
  @if (session()->has('message'))
@@ -22,7 +22,7 @@
 
     {{-- Description --}}
     <div class="form-group">
-     <textarea name="description" wire:model="description" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Description of Faculty (optional)"></textarea>
+     <textarea name="description" wire:model="description" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Description of Course (optional)"></textarea>
      @error('description')
       <span class="text-red-500 text-sm">{{$message}}</span>         
      @enderror
@@ -53,6 +53,7 @@
             <option value="5 year">5 Year</option>
         </select>
     </div>
+   
 </div>
     
     {{-- Faculty --}}
@@ -84,7 +85,7 @@
 
     {{-- Submit --}}
             <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            Submit
+            {{$editMode ? 'Update' : 'Submit'}}
         </button>
     </form>
 
@@ -122,7 +123,7 @@
                             {{-- <td class="px-3 py-2 whitespace-nowrap">{{ $course->created_at->format('M d, Y') }}</td> --}}
                             <td class="px-3 py-2 whitespace-nowrap ">
                                 <a href="#" class="bg-slate-500 p-1 text-white rounded hover:underline ">View</a> 
-                                  <button wire:click="edit({{ $course->id }})"  class="bg-blue-500 text-white p-1 rounded">Edit</button>
+                                  <button wire:click="edit({{ $course }})"  class="bg-blue-500 text-white p-1 rounded">Edit</button>
                                @if ($course->trashed())
                                     <button wire:click="unhide({{ $course->id }})" wire:confirm="Are You sure you want to hide this program ?" class="bg-white p-1 rounded">Unhide</button>
                                @else
@@ -141,3 +142,4 @@
      {{ $courses->links() }} 
 </div>
 </div>
+
