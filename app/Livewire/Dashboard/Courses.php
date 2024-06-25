@@ -112,7 +112,7 @@ class Courses extends Component
         $validatedData = $this->validate([ 
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'banner' => 'nullable|image|max:20480', // Example: Max 20MB image file
+            'banner' => 'nullable|image|max:10000', // Example: Max 20MB image file
             'comment' => 'nullable|string',
             'eligibility' => 'required|in:tenth,twelfth,diploma,undergraduate,postgraduate',
             'duration' => 'required|in:3 month,6 month,1 Year,2 year,3 year,4 year,5 year',

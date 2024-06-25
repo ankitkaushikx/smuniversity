@@ -50,7 +50,7 @@
 
         </div>
         <div>
-            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md shadow-md hover:bg-blue-700">Submit</button>
+            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md shadow-md hover:bg-blue-700">{{$editMode ? 'Update':'Submit'}}</button>
         </div>
       </form>
 
@@ -66,9 +66,9 @@
                     <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider" colspan="2"> Center Name</th>
                     <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider" colspan="2"> Person Name</th>
                     <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">Phone</th>
-                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">Email</th>
-                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">Address</th>
                     <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">Action</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">Address</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">Email</th>
                 </tr>
             </thead>
             <tbody>
@@ -87,21 +87,21 @@
                            {{$center->phone_number}}
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap">
-                           
-                           {{$center->email}}
+                            <a href="#" class="bg-slate-500 p-2 text-white rounded hover:bg-slate-600 transition duration-300">View</a>
+                            <button wire:click="edit({{ $center }})" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300">Edit</button>
+                            @if ($center->status == 'active')
+                                <button wire:click="deactivate({{ $center->id }})" wire:confirm="Deactivate This  Center"class="bg-yellow-500 p-2 text-white rounded hover:bg-yellow-600 transition duration-300">Deactivate</button>
+                            @else
+                                <button wire:click="activate({{ $center->id }})" wire:confirm="Activate This Center" class="bg-white p-2 text-gray-700 rounded hover:bg-gray-400 transition duration-300">Activate</button>
+                            @endif
+                            {{-- <button wire:click="delete({{ $center->id }})" wire:confirm="Are you sure to delete this center permanently ?" class="bg-red-500 p-2 text-white rounded hover:bg-red-600 transition duration-300">Delete</button> --}}
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap">
                            {{$center->center->address}}
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap">
-                            <a href="#" class="bg-slate-500 p-2 text-white rounded hover:bg-slate-600 transition duration-300">View</a>
-                            <button wire:click="edit({{ $center }})" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300">Edit</button>
-                            @if ($center->trashed())
-                                <button wire:click="unhide({{ $center->id }})" class="bg-yellow-500 p-2 text-white rounded hover:bg-yellow-600 transition duration-300">Unhide</button>
-                            @else
-                                <button wire:click="hide({{ $center->id }})" wire:confirm="Hide This center ?" class="bg-gray-300 p-2 text-gray-700 rounded hover:bg-gray-400 transition duration-300">Hide</button>
-                            @endif
-                            <button wire:click="delete({{ $center->id }})" wire:confirm="Are You Sure to permantely delete this center ?" class="bg-red-500 p-2 text-white rounded hover:bg-red-600 transition duration-300">Delete</button>
+                           
+                           {{$center->email}}
                         </td>
                     </tr>
                 @endforeach
@@ -113,7 +113,7 @@
     {{-- Pagination --}}
     <div class="my-3">
      {{ $centers->links() }} 
-</div>
+    </div>
 
 </div>
 
