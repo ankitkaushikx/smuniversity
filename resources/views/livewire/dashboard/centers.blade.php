@@ -39,7 +39,7 @@
             </div>
             <div>
                 <label for="id_proof" class="block text-sm font-medium text-gray-700">ID Proof*</label>
-                <input type="file" id="id_proof" wire:model="id_proof" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept="image/jpeg, image/jpg, image/png">
+                <input type="file" id="id_proof" wire:model="id_proof" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept="pdf">
                 @error('id_proof') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
             <div>
@@ -47,7 +47,6 @@
                 <input type="text" id="comment" wire:model="comment" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
                 @error('comment') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
-
         </div>
         <div>
             <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md shadow-md hover:bg-blue-700">{{$editMode ? 'Update':'Submit'}}</button>

@@ -11,6 +11,8 @@ class Student extends Model
 {
     use HasFactory, SoftDeletes;
 
+
+    protected $guarded = [];
     public function center(): BelongsTo
     {
         return $this->belongsTo(Center::class);

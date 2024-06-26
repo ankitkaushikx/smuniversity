@@ -12,7 +12,7 @@
         </div>
     @endif
 
-    {{-- Program Name --}}
+    {{-- Course Name --}}
     <div class="form-group">
         <input type="text" id="name" wire:model="name" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Name Of Course *"/>
         @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
@@ -39,13 +39,13 @@
         <div>
             <label for="duration" class="block text-sm font-medium text-gray-700">Duration:</label>
             <select wire:model.lazy="duration" id="duration" name="duration" class="block w-full mt-1 rounded-md">
-                <option value="3 month">3 Month</option>
-                <option value="6 month">6 Month</option>
-                <option value="1 Year">1 Year</option>
-                <option value="2 year">2 Year</option>
-                <option value="3 year">3 Year</option>
-                <option value="4 year">4 Year</option>
-                <option value="5 year">5 Year</option>
+                <option value="3">3 Month</option>
+                <option value="6">6 Month</option>
+                <option value="12">1 Year</option>
+                <option value="24">2 Year</option>
+                <option value="36">3 Year</option>
+                <option value="48">4 Year</option>
+                <option value="60">5 Year</option>
             </select>
         </div>
     </div>
@@ -56,7 +56,7 @@
         <select wire:model="program" id="program" name="program" class="block w-full mt-1 rounded-md">
             <option>Select</option>
             @foreach ($programs as $program)
-                <option class="{{ $program->deleted_at ? 'bg-red-200': '' }}" value="{{ $program->id }}">{{ $program->name }}</option>
+                <option class="{{ $program->deleted_at ? 'bg-red-400': '' }}" value="{{ $program->id }}">{{ $program->name }}</option>
             @endforeach
         </select>
     </div>
@@ -98,8 +98,9 @@
             <tbody>
                 @foreach ($courses as $course)
                     <tr class="hover:bg-gray-50 border-b border-gray-200 text-center">
-                        <td class="px-4 py-3 whitespace-nowrap">{{ $course->id }}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-left" colspan="2">{{ $course->name }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-xl">{{ $course->id }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-left text-lg" colspan="2">{{ $course->name }}<br>
+                        <span class="text-sm text-gray-500">{{$course->program->name}}</span></td>
                         <td class="px-4 py-3 whitespace-nowrap">
                             @if ($course->banner)
                                 <img src="{{ asset('storage/' . $course->banner) }}" alt="Banner" class="h-12 w-12 object-cover rounded-md">

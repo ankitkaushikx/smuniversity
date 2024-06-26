@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('address');
             $table->string('id_proof');
             $table->string('comment')->nullable();
-            $table->smallInteger('total_students');
+            $table->smallInteger('total_students')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

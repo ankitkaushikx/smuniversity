@@ -13,7 +13,7 @@ class Courses extends Component
     public $description;
     public $banner;
     public $eligibility = 'tenth';
-    public $duration = '3 month';
+    public $duration = '3';
     public $status;
     public $program;
     public $comment;
@@ -37,11 +37,11 @@ class Courses extends Component
             // Validate the data
             $validatedData = $this->validate([
                 'name' => 'required|string|max:255',
-                'description' => 'required|string',
+                'description' => 'nullable|string',
                 'banner' => 'nullable|image|max:20480', // Example: Max 2MB image file
                 'comment' => 'nullable|string',
-                'eligibility' => 'required|in:tenth,twelfth,diploma,undergraduate,postgraduate',
-                'duration' => 'required|in:3 month,6 month,1 Year,2 year,3 year,4 year,5 year',
+                'eligibility' => 'required',
+                'duration' => 'required',
                 'program' => 'required|exists:programs,id',
             ]);
             // dd($this->eligibility);
@@ -111,7 +111,7 @@ class Courses extends Component
     try {
         $validatedData = $this->validate([ 
             'name' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => 'nullable|string',
             'banner' => 'nullable|image|max:10000', // Example: Max 20MB image file
             'comment' => 'nullable|string',
             'eligibility' => 'required|in:tenth,twelfth,diploma,undergraduate,postgraduate',
@@ -150,7 +150,7 @@ class Courses extends Component
     {
         $course->delete();
 
-        session()->flash('message', 'Faculty Hided Successfully');
+        session()->flash('message', 'Course Hided Successfully');
     }
 
     public function unhide($id)
@@ -158,7 +158,7 @@ class Courses extends Component
         $course = Course::withTrashed()->findOrFail($id);
         if ($course && $course->trashed()) {
             $course->restore();
-            session()->flash('message', 'Program Unhided Successfully');
+            session()->flash('message', 'Course Unhided Successfully');
         }
     }
 
@@ -173,7 +173,7 @@ class Courses extends Component
         $course = Course::withTrashed()->findOrFail($course->id);
         if ($course) {
             $course->forceDelete();
-            session()->flash('message', 'Program Deleted Successfully');
+            session()->flash('message', 'Course Deleted Successfully');
         }
     }
 

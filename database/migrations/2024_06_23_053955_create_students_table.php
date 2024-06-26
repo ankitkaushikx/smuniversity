@@ -15,12 +15,13 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->foreignId('center_id')->constrained();
-            $table->string('name');
-            $table->string('enrollment_code')->unique();
+            // $table->string('name');
+            $table->string('student_code')->unique();
             $table->string('father_name');
             $table->string('mother_name');
             $table->date('dob');
-            // $table->foreignId('course_id')->constrained();
+            $table->enum('gender', ['male', 'female']);
+            $table->foreignId('course_id')->constrained();
             $table->string('session_start');
             $table->string('session_end');
             $table->string('photo');
@@ -30,7 +31,7 @@ return new class extends Migration
             $table->string('diploma')->nullable();
             $table->string('undergraduate')->nullable();
             $table->string('postgraduate')->nullable();
-            $table->enum('status', ['active', 'inactive', 'freeze'])->default('freeze');
+            // $table->enum('status', ['active', 'inactive', 'freeze'])->default('freeze');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -18,7 +18,7 @@ class Centers extends Component
     public $address;
     public $id_proof;
     public $comment;
-    public $total_students = 0;
+    // public $total_students = 0;
     public $email;
     public $phone_number;
     public $status;
@@ -41,7 +41,8 @@ class Centers extends Component
         // 'password' => 'required|string|min:8', // assuming a rule for password
         'proprietor_name' => 'required|string',
         'address' => 'required|string',
-        'id_proof' => 'required|image | max: 5000',
+        'id_proof' => 'required|mimes:pdf|max:5120',
+
         'comment' => 'nullable|string'
     ];
 
@@ -86,7 +87,7 @@ class Centers extends Component
             'id_proof' => $validatedData['id_proof'] ?? null,
             'comment' => $validatedData['comment'],
             'user_id'=> $user->id,
-            'total_student' => $this->total_student,
+            // 'total_student' => $this->total_student,
             // 'email' => $validatedData['email'],
             // 'phone_number' => $validatedData['phone_number'],
             // 'status' => $this->status,
@@ -95,7 +96,7 @@ class Centers extends Component
         ]);
 
         // Optionally reset form fields
-        $this->reset(['name', 'proprietor_name', 'address', 'id_proof', 'comment', 'total_student', 'email', 'phone_number', 'status', 'role', 'password']);
+        $this->reset(['name', 'proprietor_name', 'address', 'id_proof', 'comment', 'email', 'phone_number', 'status', 'role', 'password']);
 
         session()->flash('message', 'Center Added Successfully');
    

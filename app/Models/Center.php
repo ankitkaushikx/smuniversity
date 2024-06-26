@@ -25,4 +25,8 @@ class Center extends Model
     {
         return $this->hasMany(Student::class);
     }
+
+     public function totalStudents(): int {
+        return $this->students()->count();
+    }
 }

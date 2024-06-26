@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('program_id')->constrained();
             $table->string('name');
             $table->enum('eligibility', ['tenth', 'twelfth', 'diploma', 'undergraduate', 'postgraduate']);
-            $table->string('duration');
+            $table->tinyInteger('duration');
            
             $table->string('banner')->nullable();
             $table->string('description')->nullable();
