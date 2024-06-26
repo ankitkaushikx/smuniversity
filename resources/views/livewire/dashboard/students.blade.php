@@ -1,237 +1,297 @@
 <div class="">
     {{-- Page Heading --}}
     <h1 class="bg-gray-300 px-2 py-2 rounded-md text-center font-bold">Add New Student</h1>
-    <form wire:submit.prevent="{{$editMode ? 'update' : 'create'}}" class="space-y-4">
-     @csrf
-    {{-- Success Message --}}
-     @if (session()->has('message'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-2 rounded relative" role="alert">
-            {{ session('message') }}
-        </div>
-    @endif
-       
-       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {{-- Course Details --}}
-        {{-- Program Selection --}}
-        <div>
-            
-            <label for="program" class="block text-sm font-medium text-gray-700">Select Faculty</label>
-                <select wire:model.live="selectedProgram"    class="block w-full mt-1 rounded-md">
-                <option value="null" selected>Select</option>
-                @foreach ($programs as $program)
-                    <option value="{{ $program->id }}">{{ $program->name }}</option>
-                @endforeach
-                </select>
-        </div>
+    <form wire:submit.prevent="{{ $editMode ? 'update' : 'create' }}" class="space-y-4">
+        @csrf
+        {{-- Success Message --}}
+        @if (session()->has('message'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-2 rounded relative"
+                role="alert">
+                {{ session('message') }}
+            </div>
+        @endif
 
-        {{-- Courses --}}
-     
-        <div>
-            <label for="course" class="block text-sm font-medium text-gray-700">Select Course</label>
-                <select wire:model.live="selectedCourse" id="course" name="course" class="block w-full mt-1 rounded-md">
-                <option>Select</option>
-                @if (!is_null($courses))
-                  @foreach ($courses as $course)
-                    <option  value="{{ $course->id }}">{{ $course->name }} ({{$course->id}})</option>
-                @endforeach  
-                @endif
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {{-- Course Details --}}
+            {{-- Program Selection --}}
+            <div>
+
+                <label for="program" class="block text-sm font-medium text-gray-700">Select Faculty</label>
+                <select wire:model.live="selectedProgram" class="block w-full mt-1 rounded-md">
+                    <option value="null" selected>Select</option>
+                    @foreach ($programs as $program)
+                        <option value="{{ $program->id }}">{{ $program->name }}</option>
+                    @endforeach
                 </select>
-        </div>
-            
-                {{-- Session Start --}}
-        <div class="space-y-4 text-center  border border-green-500 p-1 rounded-md">
-            <span class="text-center">Session Start </span>
-            {{-- Month and Year Selects --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {{-- Month Select --}}
-                <div>
-                    
-                    <select wire:model="month" id="month" name="month" class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                        <option value="">-- Select Month --</option>
-                        @foreach (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $month)
-                            <option value="{{ $month }}">{{ $month }}</option>
+            </div>
+
+            {{-- Courses --}}
+
+            <div>
+                <label for="course" class="block text-sm font-medium text-gray-700">Select Course</label>
+                <select wire:model.live="selectedCourse" id="course" name="course"
+                    class="block w-full mt-1 rounded-md">
+                    <option>Select</option>
+                    @if (!is_null($courses))
+                        @foreach ($courses as $course)
+                            <option value="{{ $course->id }}">{{ $course->name }} ({{ $course->id }})</option>
                         @endforeach
-                    </select>
-                </div>
+                    @endif
+                </select>
+            </div>
 
-                {{-- Year Select --}}
-                <div>
-                
-                    <select wire:model="year" id="year" name="year" class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                        <option value="">-- Select Year --</option>
-                        @for ($year = date('Y'); $year >= 2010; $year--)
-                            <option value="{{ $year }}">{{ $year }}</option>
-                        @endfor
-                    </select>
+            {{-- Session Start --}}
+            @if(!is_null($selectedCourse))
+            <div class="space-y-4 text-center  border border-green-500 p-1 rounded-md">
+                <span class="text-center">Session Start </span>
+                {{-- Month and Year Selects --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {{-- Month Select --}}
+                    <div>
+
+                        <select wire:model.live="session_start_month" id="month" name="month"
+                            class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            <option value="">Select Month</option>
+                                    @foreach (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $index => $month)
+                            <option value="{{ $index + 1 }}">{{ $month }}</option>
+                              @endforeach
+
+                        </select>
+                    </div>
+
+                    {{-- Year Select --}}
+                    <div>
+
+                        <select wire:model.live="session_start_year" id="year" name="year"
+                            class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            <option value="">Select Year</option>
+                            @for ($year = date('Y'); $year >= 2010; $year--)
+                                <option value="{{ $year }}">{{ $year }}</option>
+                            @endfor
+                        </select>
+                    </div>
                 </div>
             </div>
-        </div>
+           @endif
+            {{-- Session Ends --}}
+             
+            @if (!is_null($selectedCourse))
+                <div class="space-y-4 text-center  border border-green-500 p-1 rounded-md">
+                <span class="text-center">Session Ends </span>
+                {{-- Month and Year Selects --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {{-- Month Select --}}
+                    <div>
 
-        {{-- Session Ends --}}
-         <div class="space-y-4 text-center  border border-green-500 p-1 rounded-md">
-            <span class="text-center">Session Ends </span>
-            {{-- Month and Year Selects --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {{-- Month Select --}}
-                <div>
-                    
-                    <select wire:model="month" id="month" name="month" class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                        <option value="">-- Select Month --</option>
-                        @foreach (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $month)
-                            <option value="{{ $month }}">{{ $month }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                        <select wire:model.live="session_end_month" id="month" name="month"
+                            class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                             <option value="">Select Month</option>
+                                    @foreach (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $index => $month)
+                            <option value="{{ $index + 1 }}">{{ $month }}</option>
+                              @endforeach
+                        </select>
+                    </div>
 
-                {{-- Year Select --}}
-                <div>
-                
-                    <select wire:model="year" id="year" name="year" class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                        <option value="">-- Select Year --</option>
-                        @for ($year = date('Y'); $year >= 2010; $year--)
-                            <option value="{{ $year }}">{{ $year }}</option>
-                        @endfor
-                    </select>
+                    {{-- Year Select --}}
+                    <div>
+
+                        <select wire:model.live="session_end_year" id="year" name="year"
+                            class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            <option value="">Select Year</option>
+                            @for ($year = date('Y') + 6; $year >= 2010; $year--)
+                                <option value="{{ $year }}">{{ $year }}</option>
+                            @endfor
+                        </select>
+                    </div>
                 </div>
             </div>
-        </div>
+            @endif
 
-       
 
-        {{-- Name --}}
+
+            {{-- Name --}}
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700">Student Name*</label>
-                <input type="text" id="name" wire:model="name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Student Name">
-                @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <input type="text" id="name" wire:model="name"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    placeholder="Student Name">
+                @error('name')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
             {{-- Gender --}}
             <div>
                 <label for="gender" class="block text-sm font-medium text-gray-700">Gender*</label>
-                <select name="gender" id="gender" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                <select  wire:model="gender" name="gender" id="gender"
+                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                 </select>
             </div>
-            
+
             {{-- DOB --}}
             <div>
                 <label for="dob" class="block text-sm font-medium text-gray-700">Date of Birth*</label>
-                <input wire:model="dob" type="date" name="dob" id="dob" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                <input wire:model="dob" type="date" name="dob" id="dob"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
             </div>
 
             {{-- Email --}}
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700">Email*</label>
-                <input type="email" id="email" wire:model="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Email">
-                @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <input type="email" id="email" wire:model="email"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Email">
+                @error('email')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
             {{-- Phone --}}
             <div>
                 <label for="phone_number" class="block text-sm font-medium text-gray-700">Phone Number*</label>
-                <input type="text" id="phone_number" wire:model="phone_number" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Phone Number (10 Digit Only)  " maxlength="10" >
-                @error('phone_number') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <input type="text" id="phone_number" wire:model="phone_number"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    placeholder="Phone Number (10 Digit Only)  " maxlength="10">
+                @error('phone_number')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
             {{--  --}}
             <div>
                 <label for="father_name" class="block text-sm font-medium text-gray-700">Father's Name*</label>
-                <input type="text" id="father_name" wire:model="father_name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Father's Name">
-                @error('father_name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <input type="text" id="father_name" wire:model="father_name"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    placeholder="Father's Name">
+                @error('father_name')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
             {{-- Mother Name --}}
             <div>
                 <label for="mother_name" class="block text-sm font-medium text-gray-700">Mother's Name*</label>
-                <input type="text" id="mother_name" wire:model="mother_name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Mother's Name">
-                @error('mother_name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <input type="text" id="mother_name" wire:model="mother_name"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    placeholder="Mother's Name">
+                @error('mother_name')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
-           {{-- Address --}}
+            {{-- Address --}}
             <div>
-            <label for="address" class="block text-sm font-medium text-gray-700">Address*</label>
-                <textarea id="address" wire:model="address" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Full Address"></textarea>
-                @error('address') 
-                    <span class="text-red-500 text-sm">{{ $message }}</span> 
+                <label for="address" class="block text-sm font-medium text-gray-700">Address*</label>
+                <textarea id="address" wire:model="address"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Full Address"></textarea>
+                @error('address')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
 
             {{-- Comments --}}
             <div>
                 <label for="comment" class="block text-sm font-medium text-gray-700">Any Comment (optional)</label>
-                <input type="text" id="comment" wire:model="comment" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
-                @error('comment') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <input type="text" id="comment" wire:model="comment"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                @error('comment')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
             {{-- Id Proof --}}
             <div>
                 <label for="id_proof" class="block text-sm font-medium text-gray-700">Student ID Proof (pdf)*</label>
-                <input type="file" id="id_proof" wire:model="id_proof" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept=".pdf">
-                @error('id_proof') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <input type="file" id="id_proof" wire:model="id_proof"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept=".pdf">
+                @error('id_proof')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
 
             {{-- Photo --}}
             <div>
-                <label for="photo" class="block text-sm font-medium text-gray-700">Student Photo (.jpeg,.jpg)*</label>
-                <input type="file" id="photo" wire:model="photo" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept="image/jpeg, image/jpg">
-                @error('photo') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <label for="photo" class="block text-sm font-medium text-gray-700">Student Photo
+                    (.jpeg,.jpg)*</label>
+                <input type="file" id="photo" wire:model="photo"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    accept="image/jpeg, image/jpg">
+                @error('photo')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
             {{-- Preview Image --}}
-           <div>
-             @if ($photo) 
-        <img width="150px" height="auto" class="rounded-md" src="{{ $photo->temporaryUrl() }}">
-            @endif
-           </div>
+            <div>
+                @if ($photo)
+                    <img width="150px" height="auto" class="rounded-md" src="{{ $photo->temporaryUrl() }}">
+                @endif
+            </div>
         </div>
-        {{-- Academics Documents--}}
+        {{-- Academics Documents --}}
         <div class="bg-gray-200 px-2 py-3 rounded-md text-center">
             <h1 class="  font-bold">Academics Documents</h1>
-            <span>According to Choosen  Course,  Documents Requirement Changes. Just Upload Documents that need or according to green box intructions </span>
+            <span>According to Choosen Course, Documents Requirement Changes. Just Upload Documents that need or
+                according to green box intructions </span>
         </div>
-        <div class=" px-2 py-3 border border-2 border-green-500 rounded-md text-center">
-            {{-- {{$course->comment}} --}}
-        </div>
-
+       
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {{-- Tenth DMC --}}
-             <div>
+            <div>
                 <label for="tenth" class="block text-sm font-medium text-gray-700">10th DMC</label>
-                <input type="file" id="tenth" wire:model="tenth" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept="pdf">
-                @error('tenth') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <input type="file" id="tenth" wire:model="tenth"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept=".pdf">
+                @error('tenth')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
 
             {{-- Twelfth DMC --}}
             <div>
                 <label for="twelfth" class="block text-sm font-medium text-gray-700">12th DMC</label>
-                <input type="file" id="twelfth" wire:model="twelfth" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept="pdf">
-                @error('twelfth') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <input type="file" id="twelfth" wire:model="twelfth"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept=".pdf">
+                @error('twelfth')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
 
             {{-- Diploma --}}
             <div>
                 <label for="diploma" class="block text-sm font-medium text-gray-700">Previous Diploma</label>
-                <input type="file" id="diploma" wire:model="diploma" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept="pdf">
-                @error('diploma') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <input type="file" id="diploma" wire:model="diploma"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept=".pdf">
+                @error('diploma')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
 
             {{-- Undergraduate --}}
-             <div>
-                <label for="undergraduate" class="block text-sm font-medium text-gray-700"> Undergraduate (Bacholers)</label>
-                <input type="file" id="undergraduate" wire:model="undergraduate" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept="pdf">
-                @error('undergraduate') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            <div>
+                <label for="undergraduate" class="block text-sm font-medium text-gray-700"> Undergraduate
+                    (Bacholers)</label>
+                <input type="file" id="undergraduate" wire:model="undergraduate"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept=".pdf">
+                @error('undergraduate')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
 
             {{-- Post Graduate --}}
             <div>
-                <label for="postgraduate" class="block text-sm font-medium text-gray-700"> Postgraduate (Masters)</label>
-                <input type="file" id="postgraduate" wire:model="postgraduate" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept="pdf">
-                @error('postgraduate') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <label for="postgraduate" class="block text-sm font-medium text-gray-700"> Postgraduate
+                    (Masters)</label>
+                <input type="file" id="postgraduate" wire:model="postgraduate"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept=".pdf">
+                @error('postgraduate')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
         </div>
         {{-- Submit Button --}}
         <div>
-            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md shadow-md hover:bg-blue-700">{{$editMode ? 'Update':'Submit'}}</button>
+            <button type="submit"
+                class="w-full bg-blue-500 text-white p-2 rounded-md shadow-md hover:bg-blue-700">{{ $editMode ? 'Update' : 'Submit' }}</button>
         </div>
-      </form>
+    </form>
 
 
-      {{-- Centers List --}}
-       {{-- <div class="mt-6 bg-green-400 rounded-md p-4">
+    {{-- Centers List --}}
+    {{-- <div class="mt-6 bg-green-400 rounded-md p-4">
     <h2 class="text-center font-bold text-lg mb-4">Centers List</h2>
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white rounded-md shadow-md">
@@ -270,9 +330,9 @@
                                 <button wire:click="activate({{ $center->id }})" wire:confirm="Activate This Center" class="bg-white p-2 text-gray-700 rounded hover:bg-gray-400 transition duration-300">Activate</button>
                             @endif --}}
 
-                            {{-- <button wire:click="delete({{ $center->id }})" wire:confirm="Are you sure to delete this center permanently ?" class="bg-red-500 p-2 text-white rounded hover:bg-red-600 transition duration-300">Delete</button> --}}
+    {{-- <button wire:click="delete({{ $center->id }})" wire:confirm="Are you sure to delete this center permanently ?" class="bg-red-500 p-2 text-white rounded hover:bg-red-600 transition duration-300">Delete</button> --}}
 
-                        {{-- </td>
+    {{-- </td>
                         <td class="px-4 py-3 whitespace-nowrap">
                            {{$center->center->address}}
                         </td>
@@ -293,4 +353,3 @@
     </div> --}}
 
 </div>
-

@@ -1,3 +1,3 @@
 <x-front-layout>
-dkfjdkjf
+Home
 </x-front-layout>

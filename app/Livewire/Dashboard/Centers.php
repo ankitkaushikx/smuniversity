@@ -24,6 +24,7 @@ class Centers extends Component
     public $status;
     public $role;
     public $password;
+    public $total_students = 0;
 
     public $center;
     public $editMode = false;
@@ -225,7 +226,13 @@ class Centers extends Component
 
 
     public function render()
-    {
-        return view('livewire.dashboard.centers',['centers'=>  User::with('center')->latest()->paginate(30)]);
-    }
+{
+    return view('livewire.dashboard.centers', [
+        'centers' => User::where('role', 'center')
+            ->with('center')
+            ->latest()
+            ->paginate(30)
+    ]);
+}
+
 }

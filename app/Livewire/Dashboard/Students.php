@@ -27,6 +27,12 @@ class Students extends Component
     public $mother_name;
     public $dob;
     public $session_start;
+
+    //Sessions 
+    public $session_start_month;
+    public $session_start_year;
+    public $session_end_month;
+    public $session_end_year;
     public $session_end;
     public $comment;
     public $address;
@@ -63,6 +69,7 @@ class Students extends Component
         'session_end' => 'required|string',
         'comment' => 'nullable|string',
         'address' => 'required|string',
+        
         'photo' => 'required|image|max:10000',
         'id_proof' => 'required|mimes:pdf|max:5120',
         'tenth' => 'nullable|mimes:pdf|max:5120',
@@ -70,7 +77,7 @@ class Students extends Component
         'diploma' => 'nullable|mimes:pdf|max:5120',
         'undergraduate' => 'nullable|mimes:pdf|max:5120',
         'postgraduate' => 'nullable|mimes:pdf|max:5120',
-        'gender' => 'required| in: male, female'
+        'gender' => 'required'
     ];
 
 
@@ -80,10 +87,10 @@ class Students extends Component
     try {
         $validatedData = $this->validate();
         // Check if the authenticated user is a center and active
-        // if (Auth::user()?->role === 'center' && Auth::user()->status === 'active') {
+        if (Auth::user()?->role === 'center' && Auth::user()->status === 'active') {
             // Get center associated with the authenticated user
                 // Get the user with ID 1 and their associated center
-                $user = User::with('center')->findOrFail(1);
+                $user = User::with('center')->findOrFail(Auth::id());
 
                 // Access the center
                 $center = $user->center;
@@ -91,7 +98,7 @@ class Students extends Component
 
             // Generate student code
             $total_students = $center->students()->count();
-            $incrementedTotalStudents = $total_students + 1;
+            $incrementedTotalStudents = str_pad($total_students + 1, 4, '0', STR_PAD_LEFT);
             $student_code = $center->center_code . $incrementedTotalStudents;
 
             // Register User
@@ -135,9 +142,10 @@ class Students extends Component
                 'father_name' => $this->father_name,
                 'mother_name' => $this->mother_name,
                 'dob' => $this->dob,
-                'course_id' => $this->course,
-                'session_start' => 'Jan 2024',
-                'session_end' => 'Jan 2025',
+                'course_id' => $this->selectedCourse,
+                'session_start' => $this->session_start,
+                'session_end' => $this->session_end,
+                'gender'=> $this->gender,
                 'photo' => $validatedData['photo'] ?? null,
                 'id_proof' => $validatedData['id_proof'] ?? null,
                 'tenth' => $validatedData['tenth'] ?? null,
@@ -147,10 +155,10 @@ class Students extends Component
                 'diploma' => $validatedData['diploma'] ?? null,
             ]);
 
-            session()->flash('message', 'Student added successfully with Enrollment (Student) Code: ' . $student_code);
-        // } else {
-            // abort(403, 'You are not allowed to add a student. Contact Admin for more details.');
-        // }
+            session()->flash('message', 'Student added successfully with Enrollment Code: ' . $student_code);
+        } else {
+            abort(403, 'You are not allowed to add a student. Contact Admin for more details.');
+        }
     } catch (\Exception $e) {
         session()->flash('message', 'An error occurred while adding the student: ' . $e->getMessage());
     }
@@ -161,6 +169,40 @@ class Students extends Component
         $this->courses = $program->courses()->get();
         $this->selectedCourse = NULL;
     }
+
+    //session start year for calculating session ends
+     
+public function updatedSessionStartYear(){
+    $start_month = $this->session_start_month; // month as number (1 for January, 2 for February, ...)
+    $start_year = $this->session_start_year; // year in four-digit format (2024, 2023)
+    
+    // Find the selected course by its ID
+    $course = Course::find($this->selectedCourse);
+    
+    // Check if the course is found
+    if ($course) {
+        $duration = $course->duration; // duration in months
+
+        // Calculate the total number of months
+        $total_months = $start_month + $duration;
+
+        // Calculate the end month and year
+        $end_year = $start_year + intdiv($total_months - 1, 12);
+        $end_month = ($total_months - 1) % 12 + 1;
+
+        $this->session_end_month = $end_month;
+        $this->session_end_year = $end_year;
+
+            $this->session_start = $this->session_start_month . '-' . $this->session_start_year;
+            $this->session_end = $this->session_end_month . '-' . $this->session_end_year;
+    } else {
+        // Handle case where course is not found
+        $this->session_end_month = null;
+        $this->session_end_year = null;
+    }
+}
+
+
 
     function mount(){
         $this->programs = Program::all();
