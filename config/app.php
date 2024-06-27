@@ -123,4 +123,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+
+    /*
+    |-----------------------------------------------------------------------Kaushik
+    | CONVERT DATE INTO FORMAT
+    |
+    |
+    | */
+       'date_format' => 'd/m/Y',
+        'date_format_javascript' => 'DD/MM/YYYY',
+
 ];

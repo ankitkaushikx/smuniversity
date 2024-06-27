@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('mother_name');
             $table->date('dob');
             $table->enum('gender', ['male', 'female']);
+            $table->string('address');
+            $table->string('comment')->nullable();
             $table->foreignId('course_id')->constrained();
             $table->string('session_start');
             $table->string('session_end');

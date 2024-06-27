@@ -73,7 +73,7 @@ class Students extends Component
         'session_start_year'             => 'required',
         'session_end_month'              => 'required',
         'session_end_year'               => 'required',
-        'photo'                          => 'required|image|max:10000',
+        'photo'                          => 'required|image|max:5000',
         'id_proof'                       => 'required|mimes:pdf|max:5120',
         'tenth'                          => 'nullable|mimes:pdf|max:5120',
         'twelfth'                        => 'nullable|mimes:pdf|max:5120',
@@ -152,6 +152,7 @@ class Students extends Component
                 'session_start'         => $this->session_start,
                 'session_end'           => $this->session_end,
                 'gender'                => $this->gender,
+                'address'               => $this->address,
                 'photo'                 => $validatedData['photo'] ?? null,
                 'id_proof'              => $validatedData['id_proof'] ?? null,
                 'tenth'                 => $validatedData['tenth'] ?? null,
@@ -165,10 +166,8 @@ class Students extends Component
             session()->flash('message', 'Student Added Successfull With Enrollment Code: ' . $student_code);
 
 
-            $this->reset(['selectedCourse','selectedProgram','name','dob'
-            ,'gender','email','phone_number','father_name','mother_name',
-            'address','comment','id_proof','photo','tenth','twelfth','
-            diploma','undergraduate','postgraduate'
+            $this->reset(['selectedCourse','selectedProgram','name','dob','gender','email','phone_number','father_name','mother_name','address','comment','id_proof','photo',
+            'tenth','twelfth','diploma','undergraduate','postgraduate'
             ]);
 
         } else {

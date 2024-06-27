@@ -1,10 +1,10 @@
 <div>
 
-    
     {{-- Page Heading  --}}
     <h1 class="bg-gray-300 p-3 rounded-md text-center font-bold">
-    {{$editMode ? 'Update Student' : 'Add New Student' }}</h1>
-
+        {{$editMode ? 'Update Student' : 'Add New Student' }}</h1>
+        
+     
     {{-- Student Registration Form --}}
     <form wire:submit.prevent="{{ $editMode ? 'update' : 'create' }}" class="space-y-4">
         @csrf
@@ -430,15 +430,29 @@
             </th>
 
             <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider" colspan="2">
-                Person Name
+                Course
             </th>
 
             <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
-                Phone
+                Phone No.
             </th>
 
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
+            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider"table>
                 Action
+            </th>
+
+            
+
+            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
+               DOB (M/F)
+            </th>
+
+            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
+                Father's Name
+            </th>
+
+            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
+                Mother's Name
             </th>
 
             <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
@@ -448,27 +462,42 @@
             <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
                 Email
             </th>
+
+            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
+               Photo
+            </th>
+
+            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
+            Documents
+            </th>
         </tr>
     </thead>
     <tbody>
         @foreach ($students as $student)
-            <tr class="font-semibold text-gray-700 border-b border-gray-200 text-student {{ $student->user->status == 'inactive' ? 'bg-yellow-400' : 'bg-white hover:bg-gray-200' }}">
+            <tr  class="font-semibold text-gray-700 border-b border-gray-200 text-student {{ $student->user->status == 'inactive' ? 'bg-yellow-400' : 'bg-white hover:bg-gray-200' }}">
                 <td class="px-4 py-3 whitespace-nowrap text-xl font-bold">{{ $student->student_code }}</td>
+
                 <td class="px-4 py-3 whitespace-nowrap" >
-                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 @if (!is_null($student->comment))
+                        bg-red-500 text-white
+                    @endif dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 0 1 1-1h11.586a1 1 0 0 1 .707.293l2.414 2.414a1 1 0 0 1 .293.707V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5Z"/>
                         <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M8 4h8v4H8V4Zm7 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
                     </svg>
                 </td>
+
                 <td class="px-4 py-3 whitespace-nowrap" colspan="2">
                     {{ $student->user->name }}
                 </td>
+
                 <td class="px-4 py-3 whitespace-nowrap" colspan="2">
-                    {{ $student->course->name }}
+                    {{ $student->course->name }} ({{$student->course->id}})
                 </td>
+
                 <td class="px-4 py-3 whitespace-nowrap">
                     {{ $student->user->phone_number }}
                 </td>
+
                 <td class="px-4 py-3 whitespace-nowrap">
                     <a href="#" class="bg-slate-500 p-2 text-white rounded hover:bg-slate-600 transition duration-300">View</a>
                     {{-- Uncomment and use these buttons as needed --}}
@@ -483,10 +512,11 @@
                     --}}
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap">
-                    {{ $student->address }}
+                    {{$student->dob}}
+                    ({{$student->gender}})
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap">
-                    {{ $student->email }}
+                    {{ $student->user->email }}
                 </td>
             </tr>
         @endforeach
