@@ -55,5 +55,10 @@ class User extends Authenticatable
         return $this->hasone(Center::class);
     }
 
+    public function student(): HasOne
+    {
+        return $this->hasOne(Student::class);
+    }
+
     
 }

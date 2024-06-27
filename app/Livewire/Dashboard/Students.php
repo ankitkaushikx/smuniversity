@@ -8,10 +8,11 @@ use App\Models\Student;
 use Livewire\WithFileUploads;
 use App\Models\Program;
 use App\Models\Course;
+use Livewire\WithPagination;
 
 class Students extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads,  WithPagination;
     public $name;
     public $email;
     public $phone_number;
@@ -43,6 +44,7 @@ class Students extends Component
     public $undergraduate;
     public $postgraduate;
     public $student;
+    // public $students;
     public $editMode = false;
 
     // Utility
@@ -55,65 +57,59 @@ class Students extends Component
 
 
     protected $rules = [
-        'name' => 'required|string',
-        'email' => 'required|email',
-        'phone_number' => [
-            'required',
-            'regex:/^\d{10}$/'
-        ],
-        'father_name' => 'required|string',
-        'mother_name' => 'required|string',
-        'dob' => 'required|date',
-        'selectedProgram' => 'required',
-        'selectedCourse' => 'required|exists:courses,id',
-        'session_start' => 'required|string',
-        'session_end' => 'required|string',
-        'comment' => 'nullable|string',
-        'address' => 'required|string',
-        'session_start_month' => 'required',
-        'session_start_year' => 'required',
-        'session_end_month' => 'required',
-         'session_end_year'=> 'required',
-        'photo' => 'required|image|max:10000',
-        'id_proof' => 'required|mimes:pdf|max:5120',
-        'tenth' => 'nullable|mimes:pdf|max:5120',
-        'twelfth' => 'nullable|mimes:pdf|max:5120',
-        'diploma' => 'nullable|mimes:pdf|max:5120',
-        'undergraduate' => 'nullable|mimes:pdf|max:5120',
-        'postgraduate' => 'nullable|mimes:pdf|max:5120',
-        'gender' => 'required'
+        'name'                           => 'required|string',
+        'email'                          => 'required|email',
+        'phone_number'                   => ['required','regex:/^\d{10}$/' ],
+        'father_name'                    => 'required|string',
+        'mother_name'                    => 'required|string',
+        'dob'                            => 'required|date',
+        'selectedProgram'                => 'required',
+        'selectedCourse'                 => 'required|exists:courses,id',
+        'session_start'                  => 'required|string',
+        'session_end'                    => 'required|string',
+        'comment'                        => 'nullable|string',
+        'address'                        => 'required|string',
+        'session_start_month'            => 'required',
+        'session_start_year'             => 'required',
+        'session_end_month'              => 'required',
+        'session_end_year'               => 'required',
+        'photo'                          => 'required|image|max:10000',
+        'id_proof'                       => 'required|mimes:pdf|max:5120',
+        'tenth'                          => 'nullable|mimes:pdf|max:5120',
+        'twelfth'                        => 'nullable|mimes:pdf|max:5120',
+        'diploma'                        => 'nullable|mimes:pdf|max:5120',
+        'undergraduate'                  => 'nullable|mimes:pdf|max:5120',
+        'postgraduate'                   => 'nullable|mimes:pdf|max:5120',
+        
     ];
 
 
+    // Function To Create New Student 
     public function create()
-{
-    
-    
+    {
         $validatedData = $this->validate();
         try{
-        // Check if the authenticated user is a center and active
+    
+            //Check User is Active Center & and Authticated 
         if (Auth::user()?->role === 'center' && Auth::user()->status === 'active') {
-            // Get center associated with the authenticated user
-                // Get the user with ID 1 and their associated center
-                $user = User::with('center')->findOrFail(Auth::id());
+            
+            //Get User With Center Relationship
+            $user = User::with('center')->findOrFail(Auth::id());
+            $center = $user->center;
 
-                // Access the center
-                $center = $user->center;
-
-
-            // Generate student code
+            //Generate Student Code 
             $total_students = $center->students()->count();
             $incrementedTotalStudents = str_pad($total_students + 1, 4, '0', STR_PAD_LEFT);
             $student_code = $center->center_code . $incrementedTotalStudents;
-
-            // Register User
+   
+            //Register A New User
             $user = User::create([
-                'name' => $this->name,
-                'email' => $this->email,
-                'phone_number' => $this->phone_number,
-                'status' => 'active',
-                'role' => 'student',
-              'password' => 'SMUS' . $this->phone_number,
+                'name'              => $this->name,
+                'email'             => $this->email,
+                'phone_number'      => $this->phone_number,
+                'status'            => 'active',
+                'role'              => 'student',
+                'password'          => 'SMUS' . $this->phone_number,
             ]);
 
             // Handle file uploads
@@ -139,144 +135,190 @@ class Students extends Component
                 $validatedData['postgraduate'] = $this->postgraduate->store('documents', 'public');
             }
 
-                $this->session_start = $this->convertSessionString($this->session_start);
-                $this->session_end = $this->convertSessionString($this->session_end);
-            // Create student
+
+            //Merge and Convert Session String to More Readable Form
+            $this->session_start = $this->convertSessionString($this->session_start);
+            $this->session_end = $this->convertSessionString($this->session_end);
+
+            //Register New Student
             Student::create([
-                'user_id' => $user->id,
-                'center_id' => $center->id,
-                'student_code' => $student_code,
-                'father_name' => $this->father_name,
-                'mother_name' => $this->mother_name,
-                'dob' => $this->dob,
-                'course_id' => $this->selectedCourse,
-                'session_start' => $this->session_start,
-                'session_end' => $this->session_end,
-                'gender'=> $this->gender,
-                'photo' => $validatedData['photo'] ?? null,
-                'id_proof' => $validatedData['id_proof'] ?? null,
-                'tenth' => $validatedData['tenth'] ?? null,
-                'twelfth' => $validatedData['twelfth'] ?? null,
-                'undergraduate' => $validatedData['undergraduate'] ?? null,
-                'postgraduate' => $validatedData['postgraduate'] ?? null,
-                'diploma' => $validatedData['diploma'] ?? null,
+                'user_id'               => $user->id,
+                'center_id'             => $center->id,
+                'student_code'          => $student_code,
+                'father_name'           => $this->father_name,
+                'mother_name'           => $this->mother_name,
+                'dob'                   => $this->dob,
+                'course_id'             => $this->selectedCourse,
+                'session_start'         => $this->session_start,
+                'session_end'           => $this->session_end,
+                'gender'                => $this->gender,
+                'photo'                 => $validatedData['photo'] ?? null,
+                'id_proof'              => $validatedData['id_proof'] ?? null,
+                'tenth'                 => $validatedData['tenth'] ?? null,
+                'twelfth'               => $validatedData['twelfth'] ?? null,
+                'undergraduate'         => $validatedData['undergraduate'] ?? null,
+                'postgraduate'          => $validatedData['postgraduate'] ?? null,
+                'diploma'               => $validatedData['diploma'] ?? null,
             ]);
 
-            session()->flash('message', 'Student added successfully with Enrollment Code: ' . $student_code);
-                $this->reset(['selectedCourse','selectedProgram','name','dob','gender','email','phone_number','father_name','mother_name','address','comment','id_proof','photo','tenth','twelfth','diploma','undergraduate','postgraduate',]);
+            //Send Feedback To User  
+            session()->flash('message', 'Student Added Successfull With Enrollment Code: ' . $student_code);
+
+
+            $this->reset(['selectedCourse','selectedProgram','name','dob'
+            ,'gender','email','phone_number','father_name','mother_name',
+            'address','comment','id_proof','photo','tenth','twelfth','
+            diploma','undergraduate','postgraduate'
+            ]);
+
         } else {
+
+            //Send Authorisation Error Message;
             abort(403, 'You are not allowed to add a student. Contact Admin for more details.');
         }
-    } catch (\Exception $e) {
-        session()->flash('message', 'An error occurred while adding the student: ' . $e->getMessage());
-    }
-}
 
-     public function updatedSelectedProgram(Program $program)
+        } catch (\Exception $e) {
+
+        session()->flash('message', 'An error occurred while adding the student: ' . $e->getMessage());
+        }
+    }
+
+    public function updatedSelectedProgram(Program $program)
     {
         $this->courses = $program->courses()->get();
         $this->selectedCourse = NULL;
-    }
 
-    //session start year for calculating session ends
+    }
      
-public function updatedSessionStartYear(){
-    $start_month = $this->session_start_month; // month as number (1 for January, 2 for February, ...)
-    $start_year = $this->session_start_year; // year in four-digit format (2024, 2023)
+    //Session Ends Updated According to Session Start 
+    public function updatedSessionStartYear()
+    {
     
-    // Find the selected course by its ID
-    $course = Course::find($this->selectedCourse);
-    
-    // Check if the course is found
-    if ($course) {
-        $duration = $course->duration; // duration in months
+                //Get Session Start Data 
+            $start_month = $this->session_start_month; 
+            $start_year = $this->session_start_year; 
+            
+            //Find Course and Duration 
+            $course = Course::find($this->selectedCourse);
+            
+            // Check if the course is found
+            if ($course) {
+                $duration = $course->duration; // duration in months
 
-        // Calculate the total number of months
-        $total_months = $start_month + $duration;
+                // Calculate the total number of months
+                $total_months = $start_month + $duration;
 
-        // Calculate the end month and year
-        $end_year = $start_year + intdiv($total_months - 1, 12);
-        $end_month = ($total_months - 1) % 12 + 1;
+                // Calculate the end month and year
+                $end_year = $start_year + intdiv($total_months - 1, 12);
+                $end_month = ($total_months - 1) % 12 + 1;
 
-        $this->session_end_month = $end_month;
-        $this->session_end_year = $end_year;
+                $this->session_end_month = $end_month;
+                $this->session_end_year = $end_year;
 
-            $this->session_start = $this->session_start_month . '-' . $this->session_start_year;
-            $this->session_end = $this->session_end_month . '-' . $this->session_end_year;
-    } else {
-        // Handle case where course is not found
-        $this->session_end_month = null;
-        $this->session_end_year = null;
+                $this->session_start = $this->session_start_month . '-' . $this->session_start_year;
+                $this->session_end = $this->session_end_month . '-' . $this->session_end_year;
+            } else {
+
+                // Handle case where course is not found
+                $this->session_end_month = null;
+                $this->session_end_year = null;
+                session()->flash('message', 'Course Not Found. ' );
+            }
     }
-}
 
     
+    //Change Eligiblity According to Selected Course
     public function updatedSelectedCourse(){
+
         $course = Course::find($this->selectedCourse);
         $this->eligibility = $course->eligibility;
-        
     }
 
-    function mount(){
+
+    //Mount Function To Render With DAta
+   public function mount()
+    {
+        // Get All Programs
         $this->programs = Program::all();
-        $this->courses = NULL;
+
+        //Get All Students  
+     
+
+        // Get All Courses
+        $this->courses = null;
     }
+
+    // Render 
     public function render()
     {
-        return view('livewire.dashboard.students', [
+       
+             $students = Student::where('center_id', Auth::id())
+            ->with([
+                'course' => function ($query) {
+                    $query->select('id', 'name', 'program_id');
+                },
+                'user' => function ($query) {
+                    $query->select('id','name', 'status', 'phone_number', 'email');
+                }
+            ])
+            ->latest()
+            ->paginate(3);
+
+        return view('livewire.dashboard.students',[
+          'students' => $students
         
         ]);
     }
 
-    // SESSION STRING CONVERSION
+  
 
    public function convertSessionString($session_string) {
-    $string = explode('-', $session_string); // [2, 2023]
-    $month = $string[0];
-    $year = $string[1];
+        $string = explode('-', $session_string); // [2, 2023]
+        $month = $string[0];
+        $year = $string[1];
 
-    switch ($month) {
-        case '1':
-            $month = 'January';
-            break;
-        case '2':
-            $month = 'February';
-            break;
-        case '3':
-            $month = 'March';
-            break;
-        case '4':
-            $month = 'April';
-            break;
-        case '5':
-            $month = 'May';
-            break;
-        case '6':
-            $month = 'June';
-            break;
-        case '7':
-            $month = 'July';
-            break;
-        case '8':
-            $month = 'August';
-            break;
-        case '9':
-            $month = 'September';
-            break;
-        case '10':
-            $month = 'October';
-            break;
-        case '11':
-            $month = 'November';
-            break;
-        case '12':
-            $month = 'December';
-            break;
-        default:
-            return 'Invalid month';
+        switch ($month) {
+            case '1':
+                $month = 'January';
+                break;
+            case '2':
+                $month = 'February';
+                break;
+            case '3':
+                $month = 'March';
+                break;
+            case '4':
+                $month = 'April';
+                break;
+            case '5':
+                $month = 'May';
+                break;
+            case '6':
+                $month = 'June';
+                break;
+            case '7':
+                $month = 'July';
+                break;
+            case '8':
+                $month = 'August';
+                break;
+            case '9':
+                $month = 'September';
+                break;
+            case '10':
+                $month = 'October';
+                break;
+            case '11':
+                $month = 'November';
+                break;
+            case '12':
+                $month = 'December';
+                break;
+            default:
+                return 'Invalid month';
+        }
+
+        return $month . '-' . $year;
     }
-
-    return $month . '-' . $year;
-}
 
 }

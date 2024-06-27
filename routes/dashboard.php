@@ -28,7 +28,7 @@ Route::prefix('dashboard')->group(function () {
   //Students Management
   Route::get('/students', \App\Livewire\Dashboard\Students::class)->name('students');
   //All Students 
-  Route::view('/students/all', 'home')->name('students.all');
+  Route::get('/students/all', \App\Livewire\Dashboard\StudentsAll::class)->name('students.all');
 
   //Results Management
   Route::get('/results', \App\Livewire\Dashboard\Results::class)->name('results');
