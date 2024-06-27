@@ -4,6 +4,7 @@
     {{-- Page Heading --}}
     <h1 class="bg-gray-300 px-2 py-2 rounded-md text-center font-bold">Add New Course</h1>
    <form wire:submit.prevent="{{ $editMode ? 'update' : 'create' }}" class="space-y-4">
+
     @csrf
     {{-- Success Message --}}
     @if (session()->has('message'))
@@ -29,11 +30,11 @@
         <div>
             <label for="eligibility" class="block text-sm font-medium text-gray-700">Eligibility:</label>
             <select wire:model.lazy="eligibility" id="eligibility" name="eligibility" class="block w-full mt-1 rounded-md">
-                <option value="tenth">Tenth</option>
-                <option value="twelfth">Twelfth</option>
-                <option value="diploma">Diploma</option>
-                <option value="undergraduate">Undergraduate</option>
-                <option value="postgraduate">Postgraduate</option>
+                <option value="10">Tenth</option>
+                <option value="11">Diploma</option>
+                <option value="12">Twelfth</option>
+                <option value="15">Undergraduate</option>
+                <option value="17">Postgraduate</option>
             </select>
         </div>
         <div>

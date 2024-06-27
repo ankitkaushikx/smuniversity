@@ -29,10 +29,10 @@ class CenterController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCenterRequest $request)
-    {
-        //
-    }
+    // public function store(StoreCenterRequest $request)
+    // {
+    //     //
+    // }
 
     /**
      * Display the specified resource.
@@ -53,10 +53,10 @@ class CenterController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCenterRequest $request, Center $center)
-    {
-        //
-    }
+    // public function update(UpdateCenterRequest $request, Center $center)
+    // {
+    //     //
+    // }
 
     /**
      * Remove the specified resource from storage.

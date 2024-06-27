@@ -5,7 +5,6 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Student;
-use Illuminate\Validation\Rule;
 use Livewire\WithFileUploads;
 use App\Models\Program;
 use App\Models\Course;
@@ -25,14 +24,14 @@ class Students extends Component
     public $gender = 'male';
     public $father_name;
     public $mother_name;
-    public $dob;
+    public $dob = null;
     public $session_start;
 
     //Sessions 
-    public $session_start_month;
-    public $session_start_year;
-    public $session_end_month;
-    public $session_end_year;
+    public $session_start_month = NULL;
+    public $session_start_year = NULL;
+    public $session_end_month = NULL;
+    public $session_end_year = NULL;
     public $session_end;
     public $comment;
     public $address;
@@ -52,6 +51,8 @@ class Students extends Component
     public $selectedProgram;
     public $selectedCourse;
 
+    public $eligibility = 0;
+
 
     protected $rules = [
         'name' => 'required|string',
@@ -69,7 +70,10 @@ class Students extends Component
         'session_end' => 'required|string',
         'comment' => 'nullable|string',
         'address' => 'required|string',
-        
+        'session_start_month' => 'required',
+        'session_start_year' => 'required',
+        'session_end_month' => 'required',
+         'session_end_year'=> 'required',
         'photo' => 'required|image|max:10000',
         'id_proof' => 'required|mimes:pdf|max:5120',
         'tenth' => 'nullable|mimes:pdf|max:5120',
@@ -84,8 +88,9 @@ class Students extends Component
     public function create()
 {
     
-    try {
+    
         $validatedData = $this->validate();
+        try{
         // Check if the authenticated user is a center and active
         if (Auth::user()?->role === 'center' && Auth::user()->status === 'active') {
             // Get center associated with the authenticated user
@@ -134,6 +139,8 @@ class Students extends Component
                 $validatedData['postgraduate'] = $this->postgraduate->store('documents', 'public');
             }
 
+                $this->session_start = $this->convertSessionString($this->session_start);
+                $this->session_end = $this->convertSessionString($this->session_end);
             // Create student
             Student::create([
                 'user_id' => $user->id,
@@ -156,6 +163,7 @@ class Students extends Component
             ]);
 
             session()->flash('message', 'Student added successfully with Enrollment Code: ' . $student_code);
+                $this->reset(['selectedCourse','selectedProgram','name','dob','gender','email','phone_number','father_name','mother_name','address','comment','id_proof','photo','tenth','twelfth','diploma','undergraduate','postgraduate',]);
         } else {
             abort(403, 'You are not allowed to add a student. Contact Admin for more details.');
         }
@@ -202,7 +210,12 @@ public function updatedSessionStartYear(){
     }
 }
 
-
+    
+    public function updatedSelectedCourse(){
+        $course = Course::find($this->selectedCourse);
+        $this->eligibility = $course->eligibility;
+        
+    }
 
     function mount(){
         $this->programs = Program::all();
@@ -212,8 +225,58 @@ public function updatedSessionStartYear(){
     {
         return view('livewire.dashboard.students', [
         
-            
-           
         ]);
     }
+
+    // SESSION STRING CONVERSION
+
+   public function convertSessionString($session_string) {
+    $string = explode('-', $session_string); // [2, 2023]
+    $month = $string[0];
+    $year = $string[1];
+
+    switch ($month) {
+        case '1':
+            $month = 'January';
+            break;
+        case '2':
+            $month = 'February';
+            break;
+        case '3':
+            $month = 'March';
+            break;
+        case '4':
+            $month = 'April';
+            break;
+        case '5':
+            $month = 'May';
+            break;
+        case '6':
+            $month = 'June';
+            break;
+        case '7':
+            $month = 'July';
+            break;
+        case '8':
+            $month = 'August';
+            break;
+        case '9':
+            $month = 'September';
+            break;
+        case '10':
+            $month = 'October';
+            break;
+        case '11':
+            $month = 'November';
+            break;
+        case '12':
+            $month = 'December';
+            break;
+        default:
+            return 'Invalid month';
+    }
+
+    return $month . '-' . $year;
+}
+
 }

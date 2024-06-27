@@ -12,7 +12,7 @@ class Courses extends Component
     public $name;
     public $description;
     public $banner;
-    public $eligibility = 'tenth';
+    public $eligibility = 10;
     public $duration = '3';
     public $status;
     public $program;
@@ -25,7 +25,7 @@ class Courses extends Component
         'banner' => 'nullable|image|max:10240', //10MB max
         'comment' => 'nullable|string',
         'duration' => 'required|string|max:20',
-        'eligibility' => 'required|in:tenth, twelfth,diploma,undergraduate,postgraduate',
+        'eligibility' => 'required|integer',
         'status' => 'required|in:active, inactive',
         'program' => 'required|exists:programs,id',
     ];
@@ -40,8 +40,8 @@ class Courses extends Component
                 'description' => 'nullable|string',
                 'banner' => 'nullable|image|max:20480', // Example: Max 2MB image file
                 'comment' => 'nullable|string',
-                'eligibility' => 'required',
-                'duration' => 'required',
+                'eligibility' => 'required|integer',
+                'duration' => 'required|integer',
                 'program' => 'required|exists:programs,id',
             ]);
             // dd($this->eligibility);
@@ -114,8 +114,8 @@ class Courses extends Component
             'description' => 'nullable|string',
             'banner' => 'nullable|image|max:10000', // Example: Max 20MB image file
             'comment' => 'nullable|string',
-            'eligibility' => 'required|in:tenth,twelfth,diploma,undergraduate,postgraduate',
-            'duration' => 'required|in:3 month,6 month,1 Year,2 year,3 year,4 year,5 year',
+            'eligibility' => 'required|integer',
+            'duration' => 'required|integer',
             'program' => 'required|exists:programs,id',
         ]);
 
@@ -167,7 +167,7 @@ class Courses extends Component
     public function delete(Course $course)
     {
         if ($course->banner) {
-            \Storage::disk('public')->delete($course->banner);
+            Storage::disk('public')->delete($course->banner);
         }
 
         $course = Course::withTrashed()->findOrFail($course->id);
