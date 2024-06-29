@@ -53,6 +53,7 @@ class Students extends Component
     public $selectedProgram;
     public $selectedCourse;
 
+    public $search = '';
     public $eligibility = 0;
 
 
@@ -247,21 +248,38 @@ class Students extends Component
         $this->courses = null;
     }
 
+
+    public function updatingSearch()
+     {
+         $this->resetPage();
+     }
+
     // Render 
     public function render()
     {
-       
-             $students = Student::where('center_id', Auth::id())
+
+        $students = Student::where('center_id', Auth::id()) // Filter students by the center ID of the authenticated user
+            ->where(function ($query) { // Nested query to handle search functionality
+                $query->whereHas('course', function ($query) { // Check if the related course name matches the search term
+                    $query->where('name', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('user', function ($query) { // Check if the related user details match the search term
+                    $query->where('name', 'like', '%' . $this->search . '%') // Match user name
+                          ->orWhere('phone_number', 'like', '%' . $this->search . '%'); // Match user phone number
+                })
+                ->orWhere('student_code', 'like', '%' . $this->search . '%'); // Match student code
+            })
             ->with([
-                'course' => function ($query) {
+                'course' => function ($query) { // Eager load the related course with selected fields
                     $query->select('id', 'name', 'program_id');
                 },
-                'user' => function ($query) {
-                    $query->select('id','name', 'status', 'phone_number', 'email');
+                'user' => function ($query) { // Eager load the related user with selected fields
+                    $query->select('id', 'name', 'status', 'phone_number', 'email');
                 }
             ])
-            ->latest()
-            ->paginate(3);
+            ->latest() // Order the results by the latest entries
+            ->paginate(4); // Paginate the results, 10 per page
+
 
         return view('livewire.dashboard.students',[
           'students' => $students

@@ -8,7 +8,6 @@
     {{-- Student Registration Form --}}
     <form wire:submit.prevent="{{ $editMode ? 'update' : 'create' }}" class="space-y-4">
         @csrf
-        
             {{-- Session Message --}}
             @if (session()->has('message'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-2 rounded relative" role="alert">
@@ -412,6 +411,7 @@
 
     {{-- Student List --}}
      <div class="mt-6 bg-green-400 rounded-md p-4">
+         <input type="text" wire:model.live.debounce.500ms="search" placeholder="Search in...     Enrollment code | Name | Course | Phone Number | Status" class="px-4 py-2 border rounded mb-4 w-full">
         <h2 class="text-center font-bold text-lg mb-4">Latest Students</h2>
         <div class="overflow-x-auto">
 <table class="min-w-full divide-y divide-gray-200">
@@ -425,11 +425,15 @@
                 Comment
             </th>
 
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider" colspan="2">
+             <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
+                Photo
+            </th>
+
+            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider" >
                 Name
             </th>
 
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider" colspan="2">
+            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider" >
                 Course
             </th>
 
@@ -464,12 +468,10 @@
             </th>
 
             <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
-               Photo
+             ID Proof
             </th>
 
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
-            Documents
-            </th>
+            
         </tr>
     </thead>
     <tbody>
@@ -477,7 +479,7 @@
             <tr  class="font-semibold text-gray-700 border-b border-gray-200 text-student {{ $student->user->status == 'inactive' ? 'bg-yellow-400' : 'bg-white hover:bg-gray-200' }}">
                 <td class="px-4 py-3 whitespace-nowrap text-xl font-bold">{{ $student->student_code }}</td>
 
-                <td class="px-4 py-3 whitespace-nowrap" >
+                <td class="px-4 whitespace-nowrap" >
                     <svg class="w-6 h-6 @if (!is_null($student->comment))
                         bg-red-500 text-white
                     @endif dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">
@@ -486,11 +488,16 @@
                     </svg>
                 </td>
 
-                <td class="px-4 py-3 whitespace-nowrap" colspan="2">
+                <td class="">
+                    <img src="{{ asset('storage/' . $student->photo) }}" style="max-height: 200px" class="rounded-full">
+                </td>
+
+
+                <td class="px-4 py-3 whitespace-nowrap" >
                     {{ $student->user->name }}
                 </td>
 
-                <td class="px-4 py-3 whitespace-nowrap" colspan="2">
+                <td class="px-4 py-3 whitespace-nowrap" >
                     {{ $student->course->name }} ({{$student->course->id}})
                 </td>
 
@@ -512,12 +519,28 @@
                     --}}
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap">
-                    {{$student->dob}}
-                    ({{$student->gender}})
+                    {{date('d-m-Y', strtotime($student->dob))}}
+                    ({{substr($student->gender,0,1)}})
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap">
+                    {{ $student->father_name }}
+                </td>
+
+                {{-- Mother NAme --}}
+                 <td class="px-4 py-3 whitespace-nowrap">
+                    {{ $student->mother_name }}
+                </td>
+                 <td class="px-4 py-3 whitespace-nowrap">
+                    {{ $student->address }}
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap">
                     {{ $student->user->email }}
                 </td>
+                 <!-- resources/views/student/show.blade.php -->
+                <td class="px-4 py-3 whitespace-nowrap text-blue-500">
+                    <a href="{{ asset('storage/' . $student->id_proof) }}" target="_blank">View</a>
+                </td>
+
             </tr>
         @endforeach
     </tbody>

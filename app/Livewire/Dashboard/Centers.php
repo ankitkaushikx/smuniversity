@@ -26,6 +26,7 @@ class Centers extends Component
     public $password;
     public $total_students = 0;
 
+    public $search = '';
     public $center;
     public $editMode = false;
 
@@ -225,14 +226,30 @@ class Centers extends Component
     }
 
 
-    public function render()
+public function render()
 {
-    return view('livewire.dashboard.centers', [
-        'centers' => User::where('role', 'center')
-            ->with('center')
-            ->latest()
-            ->paginate(30)
+        return view('livewire.dashboard.centers', [
+            'centers' => Center::where(function ($query) {
+                $query->where('center_code', 'like', '%' . $this->search . '%')
+                    ->orWhereHas('user', function ($query) {
+                        $query->where('status', 'like', '%' . $this->search . '%')
+                            ->orWhere('phone_number', 'like', '%' . $this->search . '%')
+                            ->orWhere('name', 'like', '%' . $this->search . '%');
+                    });
+            })
+                ->with([
+                    'user' => function ($query) {
+                        $query->select('id', 'name', 'status', 'phone_number', 'email');
+                    },
+                    
+    
+    ])
+    ->select('id','center_code', 'user_id', 'proprietor_name','id_proof','address')
+    ->latest()
+    ->paginate(3)
+
     ]);
 }
+
 
 }

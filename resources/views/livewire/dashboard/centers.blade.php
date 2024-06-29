@@ -1,4 +1,5 @@
 <div class="">
+   
     {{-- Page Heading --}}
     <h1 class="bg-gray-300 px-2 py-2 rounded-md text-center font-bold">Add New Center</h1>
     <form wire:submit.prevent="{{$editMode ? 'update' : 'create'}}" class="space-y-4">
@@ -21,6 +22,7 @@
                 <input type="email" id="email" wire:model="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Email">
                 @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
+            
             <div>
                 <label for="phone_number" class="block text-sm font-medium text-gray-700">Phone Number*</label>
                 <input type="text" id="phone_number" wire:model="phone_number" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Phone Number (10 Digit Only)  " maxlength="10" >
@@ -39,7 +41,7 @@
             </div>
             <div>
                 <label for="id_proof" class="block text-sm font-medium text-gray-700">ID Proof*</label>
-                <input type="file" id="id_proof" wire:model="id_proof" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept="pdf">
+                <input type="file" id="id_proof" wire:model="id_proof" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" accept=".pdf">
                 @error('id_proof') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
             <div>
@@ -56,6 +58,7 @@
 
       {{-- Centers List --}}
        <div class="mt-6 bg-green-400 rounded-md p-4">
+         <input type="text" wire:model.live.debounce.500ms="search" placeholder="Search in...     Center code | Name | Phone Number | Status" class="px-4 py-2 border rounded mb-4 w-full">
     <h2 class="text-center font-bold text-lg mb-4">Centers List</h2>
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white rounded-md shadow-md">
@@ -66,29 +69,31 @@
                     <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider" colspan="2"> Person Name</th>
                     <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">Phone</th>
                     <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">Action</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">ID Proof</th>
                     <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">Address</th>
                     <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">Email</th>
                 </tr>
             </thead>
             <tbody>
+               
                 @foreach ($centers as $center)
-                    <tr class=" border-b border-gray-200 text-center {{$center->status == 'inactive' ? 'bg-yellow-400' :'bg-white hover:bg-gray-200' }}">
-                        <td class="px-4 py-3 whitespace-nowrap text-xl font-bold">{{ $center->center->center_code}}</td>
+                    <tr class=" border-b border-gray-200 text-center {{$center->user->status == 'inactive' ? 'bg-yellow-400' :'bg-white hover:bg-gray-200' }}">
+                        <td class="px-4 py-3 whitespace-nowrap text-xl font-bold">{{ $center->center_code}}</td>
                         <td class="px-4 py-3 whitespace-nowrap text-left" colspan="2">
-                            {{ $center->name }} <br>
+                            {{ $center->user->name }} <br>
                            
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap text-left" colspan="2">
-                            {{ $center->center->proprietor_name }} <br>
+                            {{ $center->proprietor_name }} <br>
                            
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap">
-                           {{$center->phone_number}}
+                           {{$center->user->phone_number}}
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap">
                             <a href="#" class="bg-slate-500 p-2 text-white rounded hover:bg-slate-600 transition duration-300">View</a>
                             <button wire:click="edit({{ $center }})" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300">Edit</button>
-                            @if ($center->status == 'active')
+                            @if ($center->user->status == 'active')
                                 <button wire:click="deactivate({{ $center->id }})" wire:confirm="Deactivate This  Center"class="bg-yellow-500 p-2 text-white rounded hover:bg-yellow-600 transition duration-300">Deactivate</button>
                             @else
                                 <button wire:click="activate({{ $center->id }})" wire:confirm="Activate This Center" class="bg-white p-2 text-gray-700 rounded hover:bg-gray-400 transition duration-300">Activate</button>
@@ -96,11 +101,14 @@
                             {{-- <button wire:click="delete({{ $center->id }})" wire:confirm="Are you sure to delete this center permanently ?" class="bg-red-500 p-2 text-white rounded hover:bg-red-600 transition duration-300">Delete</button> --}}
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap">
-                           {{$center->center->address}}
+                          <a href="{{ asset('storage/' . $center->id_proof) }}" target="_blank">View</a>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                           {{$center->address}}
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap">
                            
-                           {{$center->email}}
+                           {{$center->user->email}}
                         </td>
                     </tr>
                 @endforeach
