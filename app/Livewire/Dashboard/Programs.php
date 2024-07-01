@@ -62,22 +62,18 @@ class Programs extends Component
 
 
     //hide the program
-    public function hide(Program $program ){
-        
-        
-        $program->delete();
+    public function hide(Program $program)
+    {
+        $program->update(['status' => 'inactive']);
 
-        session()->flash('message', 'Faculty Hided Successfully');
-        
+        session()->flash('message', 'Program Deactivated Successfully');
     }
 
-       public function unhide($id)
+    public function unhide(Program $program)
     {
-        $program = Program::withTrashed()->findOrFail($id);
-        if ($program && $program->trashed()) {
-            $program->restore();
-            session()->flash('message', 'Program Unhided Successfully');
-        }
+                $program->update(['status' => 'active']);
+        session()->flash('message', 'Program Activated Successfully ');
+
     }
 
     //delete the program
@@ -99,7 +95,7 @@ class Programs extends Component
     public function render()
     {
         return view('livewire.dashboard.programs', [
-    'programs' => Program::withTrashed()->latest()->paginate(10)
+    'programs' => Program::latest()->paginate(10)
 ]);
 
     }

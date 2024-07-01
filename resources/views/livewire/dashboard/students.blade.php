@@ -456,7 +456,7 @@
                         
                         <td>
                             <!-- Student photo -->
-                            <img src="{{ asset('storage/' . $student->photo) }}" style="max-height:200px min-width:200px" class="rounded-full">
+                            <img src="{{ asset('storage/' . $student->photo) }}" style="min-height:200px min-width:200px" class="rounded-full">
                         </td>
                         
                         <td class="px-4 py-3 whitespace-nowrap">{{ $student->user->name }}</td>

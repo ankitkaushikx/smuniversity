@@ -19,7 +19,8 @@ return new class extends Migration
             $table->tinyInteger('passing_marks');
             $table->tinyInteger('theory_marks');
             $table->tinyInteger('practical_marks')->nullable();
-            $table->string('banner')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
+            // $table->string('banner')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

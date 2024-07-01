@@ -15,7 +15,7 @@
 
     {{-- Course Name --}}
     <div class="form-group">
-        <input type="text" id="name" wire:model="name" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Name Of Course *"/>
+        <input type="text" id="name" wire:model="name" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Name Of Subject *"/>
         @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
     </div>
 

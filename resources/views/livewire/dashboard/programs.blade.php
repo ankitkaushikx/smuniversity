@@ -69,7 +69,7 @@
             </thead>
             <tbody>
                 @foreach ($programs as $program)
-                    <tr class="hover:bg-gray-100 border-b border-gray-200 text-center">
+                    <tr class="hover:bg-gray-100 border-b border-gray-200 text-center {{$program->status == 'inactive' ? 'bg-yellow-400' : 'bg-white hover:bg-gray-100'}}">
                         <td class="px-4 py-3 whitespace-nowrap">{{ $program->id }}</td>
                         <td class="px-4 py-3 whitespace-nowrap text-left" colspan="2">{{ $program->name }}</td>
                         <td class="px-4 py-3 whitespace-nowrap">
@@ -82,12 +82,12 @@
                         <td class="px-4 py-3 whitespace-nowrap space-x-2">
                             <a href="#" class="bg-slate-500 text-white p-2 rounded hover:bg-slate-600 transition duration-300">View</a> 
                             <button wire:click="edit({{ $program->id }})" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300">Edit</button>
-                            @if ($program->trashed())
-                                <button wire:click="unhide({{ $program->id }})" wire:confirm="Are You sure you want to hide this program?" class="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 transition duration-300">Unhide</button>
+                            @if ($program->status == 'inactive')
+                                <button wire:click="unhide({{ $program->id }})" wire:confirm="Are You sure you want to hide this program?" class="bg-white p-2 rounded hover:bg-yellow-600 transition duration-300">Activate</button>
                             @else
-                                <button wire:click="hide({{ $program->id }})" wire:confirm="Are You sure you want to hide this program?" class="bg-gray-300 text-gray-700 p-2 rounded hover:bg-gray-400 transition duration-300">Hide</button>
+                                <button wire:click="hide({{ $program->id }})" wire:confirm="Are You sure you want to hide this program?" class="bg-yellow-500 text-gray-700 p-2 rounded hover:bg-gray-400 transition duration-300">Deactivate</button>
                             @endif
-                            <button wire:click="delete({{ $program->id }})" wire:confirm="Are You sure you want to delete this program?" class="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition duration-300">Delete</button>
+                            {{-- <button wire:click="delete({{ $program->id }})" wire:confirm="Are You sure you want to delete this program?" class="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition duration-300">Delete</button> --}}
                         </td>
                     </tr>
                 @endforeach

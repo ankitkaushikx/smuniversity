@@ -17,6 +17,8 @@ Route::prefix('dashboard')->group(function () {
     // Course
     Route::get('/courses', \App\Livewire\Dashboard\Courses::class)->name('courses');
 
+    //Subjects
+    Route::get('/subjects', \App\Livewire\Dashboard\Subjects::class)->name('subjects');
     // NoticeZone
     Route::get('/noticezone', \App\Livewire\Dashboard\Noticezone::class)->name('noticezone');
 

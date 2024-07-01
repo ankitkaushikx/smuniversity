@@ -241,7 +241,7 @@ class Students extends Component
    public function mount()
     {
         // Get All Programs
-         $this->programs =  Program::all();
+        $this->programs = Program::where('status', 'active')->get();
    
 
         //Get All Students  
