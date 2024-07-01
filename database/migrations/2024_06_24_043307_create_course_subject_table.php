@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('course_id')->constrained();
             $table->foreignId('subject_id')->constrained();
-            $table->tinyInteger('years');
-            $table->tinyInteger('semesters');
+            $table->tinyInteger('year');
+            $table->tinyInteger('semester');
             $table->softDeletes();
             $table->timestamps();
         });

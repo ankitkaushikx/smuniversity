@@ -7,8 +7,9 @@ use App\Livewire\Dashboard\Courses;
 // Dashboard routes
 Route::view('/dashboard', 'livewire.pages.dashboard')->name('dashboard')->middleware('auth');
 
+
 // All Dashboard Routes With Prefix
-Route::prefix('dashboard')->middleware('auth')->group(function () {
+Route::prefix('dashboard')->group(function () {
 
     // Programs 
     Route::get('/programs', \App\Livewire\Dashboard\Programs::class)->name('programs');

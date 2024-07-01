@@ -15,6 +15,7 @@ class Courses extends Component
     public $eligibility = 10;
     public $duration = '3';
     public $status;
+    public $search;
     public $program;
     public $comment;
     public $editMode = false;
@@ -148,18 +149,16 @@ class Courses extends Component
     //hide the program
     public function hide(Course $course)
     {
-        $course->delete();
+        $course->update(['status' => 'inactive']);
 
-        session()->flash('message', 'Course Hided Successfully');
+        session()->flash('message', 'Course Deactivated Successfully');
     }
 
-    public function unhide($id)
+    public function unhide(Course $course)
     {
-        $course = Course::withTrashed()->findOrFail($id);
-        if ($course && $course->trashed()) {
-            $course->restore();
-            session()->flash('message', 'Course Unhided Successfully');
-        }
+                $course->update(['status' => 'active']);
+        session()->flash('message', 'Course Activated Successfully ');
+
     }
 
     //delete the program
@@ -183,8 +182,18 @@ class Courses extends Component
     public function render()
     {
         return view('livewire.dashboard.courses', [
-            'courses' => Course::withTrashed()->latest()->paginate(10),
-            'programs' => Program::withTrashed()->get(),
-        ]);
+            'courses' => Course::where(function ($query) {
+                $query->whereHas('program', function ($query) {
+                    $query->where('name', 'like', '%' . $this->search . '%');
+                })
+                    ->orWhere('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('status', 'like', '%' . $this->search . '%');
+    })
+    ->with(['program'])
+    ->latest()
+    ->paginate(10),
+    'programs' => Program::withTrashed()->get(),
+]);
+
     }
 }

@@ -1,6 +1,6 @@
 <?php
 namespace App\Livewire\Dashboard;
-
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -56,6 +56,7 @@ class Students extends Component
     public $search = '';
     public $eligibility = 0;
 
+    public $isAdmin = false;
 
     protected $rules = [
         'name'                           => 'required|string',
@@ -185,7 +186,8 @@ class Students extends Component
 
     public function updatedSelectedProgram(Program $program)
     {
-        $this->courses = $program->courses()->get();
+      $this->courses = $program->courses()->where('status', 'active')->get();
+
         $this->selectedCourse = NULL;
 
     }
@@ -239,26 +241,26 @@ class Students extends Component
    public function mount()
     {
         // Get All Programs
-        $this->programs = Program::all();
+         $this->programs =  Program::all();
+   
 
         //Get All Students  
-     
+        $this->isAdmin = Auth::user()->role === 'admin';
 
         // Get All Courses
         $this->courses = null;
+        
     }
 
-
-    public function updatingSearch()
-     {
-         $this->resetPage();
-     }
-
+    
     // Render 
     public function render()
     {
-
-        $students = Student::where('center_id', Auth::id()) // Filter students by the center ID of the authenticated user
+        if (!$this->isAdmin) {
+            # code...
+            $user = User::find(Auth::id()); // Retrieve authenticated user
+            $centerId = $user->center->id;
+            $students = Student::where('center_id', $centerId) // Filter students by the center ID of the authenticated user
             ->where(function ($query) { // Nested query to handle search functionality
                 $query->whereHas('course', function ($query) { // Check if the related course name matches the search term
                     $query->where('name', 'like', '%' . $this->search . '%');
@@ -278,10 +280,32 @@ class Students extends Component
                 }
             ])
             ->latest() // Order the results by the latest entries
-            ->paginate(4); // Paginate the results, 10 per page
+            ->paginate(10); // Paginate the results, 10 per page
 
+        } else {
+        $students = Student::where(function ($query) { // Nested query to handle search functionality
+                $query->whereHas('course', function ($query) { // Check if the related course name matches the search term
+                    $query->where('name', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('user', function ($query) { // Check if the related user details match the search term
+                    $query->where('name', 'like', '%' . $this->search . '%') // Match user name
+                          ->orWhere('phone_number', 'like', '%' . $this->search . '%'); // Match user phone number
+                })
+                ->orWhere('student_code', 'like', '%' . $this->search . '%'); // Match student code
+            })
+            ->with([
+                'course' => function ($query) { // Eager load the related course with selected fields
+                    $query->select('id', 'name', 'program_id');
+                },
+                'user' => function ($query) { // Eager load the related user with selected fields
+                    $query->select('id', 'name', 'status', 'phone_number', 'email');
+                }
+            ])
+            ->latest() // Order the results by the latest entries
+            ->paginate(10); // Paginate the results, 10 per page
+        }
 
-        return view('livewire.dashboard.students',[
+            return view('livewire.dashboard.students',[
           'students' => $students
         
         ]);
@@ -336,6 +360,19 @@ class Students extends Component
         }
 
         return $month . '-' . $year;
+    }
+
+
+    public function deactivate(User $user){
+        $user->update(['status' => 'inactive']);
+
+        session()->flash('message', 'Student Deactivated Successfully');
+    }
+
+    public function activate(User $user){
+        $user->update(['status' => 'active']);
+
+        session()->flash('message', 'Student Activated Successfully');
     }
 
 }

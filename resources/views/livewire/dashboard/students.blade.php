@@ -309,7 +309,7 @@
         </div> {{--2*2 Form Grid Ends Here--}}
     
 
-        {{-- ACADEMICS DOCUMENTS ---------------------------------- --}}
+        {{-- -----------------------------ACADEMICS DOCUMENTS ---------------------------------- --}}
         {{-- Heading --}}
         <div class="bg-gray-200 p-3  mt-4 rounded-md text-center">
             <p class="text-lg font-bold">Academic Documents</p>
@@ -409,149 +409,94 @@
     </form>  {{--Form Ends HERE--}}
 
 
-    {{-- Student List --}}
-     <div class="mt-6 bg-green-400 rounded-md p-4">
-         <input type="text" wire:model.live.debounce.500ms="search" placeholder="Search in...     Enrollment code | Name | Course | Phone Number | Status" class="px-4 py-2 border rounded mb-4 w-full">
+    {{-- --------------------------------STUDENT LIST TABLE --------------------------------}}
+
+    <div class="mt-6 bg-green-400 rounded-md p-4">
+        
+        <!-- Heading for the table -->
         <h2 class="text-center font-bold text-lg mb-4">Latest Students</h2>
-        <div class="overflow-x-auto">
-<table class="min-w-full divide-y divide-gray-200">
-    <thead>
-        <tr class="text-left bg-slate-500 text-white">
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
-                Enrollment
-            </th>
 
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
-                Comment
-            </th>
+        <!-- Search input for students -->
+        <input type="text" wire:model.live.debounce.500ms="search" placeholder="Search in... Enrollment code | Name | Course | Phone Number | Status" class="px-4 py-2 border rounded mb-4 w-full">
+    
+    <!-- Table container with horizontal scrolling -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+                <tr class="text-left bg-slate-500 text-white">
+                    <!-- Table headers -->
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium uppercase tracking-wider">Enrollment</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium uppercase tracking-wider">Comment</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium uppercase tracking-wider">Photo</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium uppercase tracking-wider">Name</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium uppercase tracking-wider">Course</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium uppercase tracking-wider">Phone No.</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium uppercase tracking-wider">Action</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium uppercase tracking-wider">DOB (M/F)</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium uppercase tracking-wider">Father's Name</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium uppercase tracking-wider">Mother's Name</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium uppercase tracking-wider">Address</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium uppercase tracking-wider">Email</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium uppercase tracking-wider">ID Proof</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($students as $student)
+                    <tr class="font-semibold text-gray-700 border-b border-gray-200 text-student {{ $student->user->status == 'inactive' ? 'bg-yellow-400' : 'bg-white hover:bg-gray-200' }}">
+                        <!-- Student details -->
+                        <td class="px-4 py-3 whitespace-nowrap text-xl font-bold">{{ $student->student_code }}</td>
+                        
+                        <td class="px-4 whitespace-nowrap">
+                            <!-- Comment icon (highlighted if comment exists) -->
+                            <svg class="w-6 h-6 @if (!is_null($student->comment)) bg-red-500 text-white @endif dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 0 1 1-1h11.586a1 1 0 0 1 .707.293l2.414 2.414a1 1 0 0 1 .293.707V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5Z"/>
+                                <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M8 4h8v4H8V4Zm7 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                            </svg>
+                        </td>
+                        
+                        <td>
+                            <!-- Student photo -->
+                            <img src="{{ asset('storage/' . $student->photo) }}" style="max-height:200px min-width:200px" class="rounded-full">
+                        </td>
+                        
+                        <td class="px-4 py-3 whitespace-nowrap">{{ $student->user->name }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">{{ $student->course->name }} ({{$student->course->id}})</td>
+                        <td class="px-4 py-3 whitespace-nowrap">{{ $student->user->phone_number }}</td>
+                        
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <!-- Action buttons -->
+                            <a href="#" class="bg-slate-500 p-2 text-white rounded hover:bg-slate-600 transition duration-300">View</a>
+                            {{-- Uncomment and use these buttons as needed --}}
+                            
+                           @if ($isAdmin)   {{--- Is Admin ---}}
+                                <button wire:click="edit({{ $student->id }})" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300">Edit</button>
+                            @if ($student->user->status == 'active')
+                                <button wire:click="deactivate({{ $student->user->id }})" wire:confirm="Deactivate This student" class="bg-yellow-500 p-2 text-white rounded hover:bg-yellow-600 transition duration-300">Deactivate</button>
+                            @else
+                                <button wire:click="activate({{ $student->user->id }})" wire:confirm="Activate This student" class="bg-white p-2 text-gray-700 rounded hover:bg-gray-400 transition duration-300">Activate</button>
+                            @endif 
+                           @endif
+                           
+                            
+                        </td>
+                        
+                        <td class="px-4 py-3 whitespace-nowrap">{{ date('d-m-Y', strtotime($student->dob)) }} ({{ substr($student->gender, 0, 1) }})</td>
+                        <td class="px-4 py-3 whitespace-nowrap">{{ $student->father_name }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">{{ $student->mother_name }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">{{ $student->address }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">{{ $student->user->email }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-blue-500">
+                            <!-- Link to view ID proof -->
+                            <a href="{{ asset('storage/' . $student->id_proof) }}" target="_blank">View</a>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 
-             <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
-                Photo
-            </th>
-
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider" >
-                Name
-            </th>
-
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider" >
-                Course
-            </th>
-
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
-                Phone No.
-            </th>
-
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider"table>
-                Action
-            </th>
-
-            
-
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
-               DOB (M/F)
-            </th>
-
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
-                Father's Name
-            </th>
-
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
-                Mother's Name
-            </th>
-
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
-                Address
-            </th>
-
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
-                Email
-            </th>
-
-            <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium  uppercase tracking-wider">
-             ID Proof
-            </th>
-
-            
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($students as $student)
-            <tr  class="font-semibold text-gray-700 border-b border-gray-200 text-student {{ $student->user->status == 'inactive' ? 'bg-yellow-400' : 'bg-white hover:bg-gray-200' }}">
-                <td class="px-4 py-3 whitespace-nowrap text-xl font-bold">{{ $student->student_code }}</td>
-
-                <td class="px-4 whitespace-nowrap" >
-                    <svg class="w-6 h-6 @if (!is_null($student->comment))
-                        bg-red-500 text-white
-                    @endif dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 0 1 1-1h11.586a1 1 0 0 1 .707.293l2.414 2.414a1 1 0 0 1 .293.707V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5Z"/>
-                        <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M8 4h8v4H8V4Zm7 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-                    </svg>
-                </td>
-
-                <td class="">
-                    <img src="{{ asset('storage/' . $student->photo) }}" style="max-height: 200px" class="rounded-full">
-                </td>
-
-
-                <td class="px-4 py-3 whitespace-nowrap" >
-                    {{ $student->user->name }}
-                </td>
-
-                <td class="px-4 py-3 whitespace-nowrap" >
-                    {{ $student->course->name }} ({{$student->course->id}})
-                </td>
-
-                <td class="px-4 py-3 whitespace-nowrap">
-                    {{ $student->user->phone_number }}
-                </td>
-
-                <td class="px-4 py-3 whitespace-nowrap">
-                    <a href="#" class="bg-slate-500 p-2 text-white rounded hover:bg-slate-600 transition duration-300">View</a>
-                    {{-- Uncomment and use these buttons as needed --}}
-                    {{-- 
-                    <button wire:click="edit({{ $student->id }})" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300">Edit</button>
-                    @if ($student->user->status == 'active')
-                        <button wire:click="deactivate({{ $student->user->id }})" wire:confirm="Deactivate This student" class="bg-yellow-500 p-2 text-white rounded hover:bg-yellow-600 transition duration-300">Deactivate</button>
-                    @else
-                        <button wire:click="activate({{ $student->id }})" wire:confirm="Activate This student" class="bg-white p-2 text-gray-700 rounded hover:bg-gray-400 transition duration-300">Activate</button>
-                    @endif 
-                    <button wire:click="delete({{ $student->id }})" wire:confirm="Are you sure to delete this student permanently?" class="bg-red-500 p-2 text-white rounded hover:bg-red-600 transition duration-300">Delete</button>
-                    --}}
-                </td>
-                <td class="px-4 py-3 whitespace-nowrap">
-                    {{date('d-m-Y', strtotime($student->dob))}}
-                    ({{substr($student->gender,0,1)}})
-                </td>
-                <td class="px-4 py-3 whitespace-nowrap">
-                    {{ $student->father_name }}
-                </td>
-
-                {{-- Mother NAme --}}
-                 <td class="px-4 py-3 whitespace-nowrap">
-                    {{ $student->mother_name }}
-                </td>
-                 <td class="px-4 py-3 whitespace-nowrap">
-                    {{ $student->address }}
-                </td>
-                <td class="px-4 py-3 whitespace-nowrap">
-                    {{ $student->user->email }}
-                </td>
-                 <!-- resources/views/student/show.blade.php -->
-                <td class="px-4 py-3 whitespace-nowrap text-blue-500">
-                    <a href="{{ asset('storage/' . $student->id_proof) }}" target="_blank">View</a>
-                </td>
-
-            </tr>
-        @endforeach
-    </tbody>
-</table>
-
-        </div>
-    </div> 
-
-    {{-- Pagination --}}
-   <div class="my-3">
+    <!-- Pagination -->
+    <div class="my-3">
         {{ $students->links() }}
-    </div> 
-
+    </div>
 </div>

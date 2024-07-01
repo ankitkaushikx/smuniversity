@@ -86,22 +86,28 @@
     {{-- Course List Table --}}
     <div class="mt-6 bg-green-400 rounded-md p-4">
     <h2 class="text-center font-bold text-lg mb-4">Course List</h2>
+    {{-- Search Field --}}
+     <input type="text" wire:model.live.debounce.500ms="search" placeholder="Search in... | Name | Program | Status | " class="px-4 py-2 border rounded mb-4 w-full">
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white rounded-md shadow-md">
             <thead class="bg-gray-100">
                 <tr>
                     <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">Sr.No</th>
                     <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider" colspan="2">Name</th>
+                    <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider" colspan="2">Faculty</th>
                     <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">Banner</th>
                     <th class="px-4 py-2 border-b border-gray-300 text-xs font-medium text-gray-600 uppercase tracking-wider">Action</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($courses as $course)
-                    <tr class="hover:bg-gray-50 border-b border-gray-200 text-center">
+                    <tr class=" border-b border-gray-200 text-center {{$course->status == 'inactive' ? 'bg-yellow-400' : 'bg-white hover:bg-gray-100'}}">
                         <td class="px-4 py-3 whitespace-nowrap text-xl">{{ $course->id }}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-left text-lg" colspan="2">{{ $course->name }}<br>
-                        <span class="text-sm text-gray-500">{{$course->program->name}}</span></td>
+                        <td class="px-4 py-3 whitespace-nowrap text-left text-lg font-bold" colspan="2">{{ $course->name }}<br>
+                      </td>
+
+                        <td class="px-4 py-3 whitespace-nowrap text-left " colspan="2">{{$course->program->name}}</td>
+
                         <td class="px-4 py-3 whitespace-nowrap">
                             @if ($course->banner)
                                 <img src="{{ asset('storage/' . $course->banner) }}" alt="Banner" class="h-12 w-12 object-cover rounded-md">
@@ -112,12 +118,12 @@
                         <td class="px-4 py-3 whitespace-nowrap">
                             <a href="#" class="bg-slate-500 p-2 text-white rounded hover:bg-slate-600 transition duration-300">View</a>
                             <button wire:click="edit({{ $course }})" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300">Edit</button>
-                            @if ($course->trashed())
-                                <button wire:click="unhide({{ $course->id }})" class="bg-yellow-500 p-2 text-white rounded hover:bg-yellow-600 transition duration-300">Unhide</button>
+                            @if ($course->status == 'inactive')
+                                <button wire:click="unhide({{ $course->id }})" wire:confirm="Activate This Course ?" class="bg-white p-2 rounded hover:bg-yellow-600 transition duration-300 text-black">Activate</button>
                             @else
-                                <button wire:click="hide({{ $course->id }})" wire:confirm="Hide This Course ?" class="bg-gray-300 p-2 text-gray-700 rounded hover:bg-gray-400 transition duration-300">Hide</button>
+                                <button wire:click="hide({{ $course->id }})" wire:confirm="Deactivate This course ?" class="bg-gray-300 p-2 text-gray-700 rounded hover:bg-gray-400 transition duration-300">Deactivate</button>
                             @endif
-                            <button wire:click="delete({{ $course->id }})" wire:confirm="Are You Sure to permantely delete this course ?" class="bg-red-500 p-2 text-white rounded hover:bg-red-600 transition duration-300">Delete</button>
+                            {{-- <button wire:click="delete({{ $course->id }})" wire:confirm="Are You Sure to permantely delete this course ?" class="bg-red-500 p-2 text-white rounded hover:bg-red-600 transition duration-300">Delete</button> --}}
                         </td>
                     </tr>
                 @endforeach
